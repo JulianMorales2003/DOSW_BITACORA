@@ -9,9 +9,9 @@ Estructura: `src/main/dosw/semana_1/streams` (Streams basicos) y `src/main/dosw/
 # SEMANA No 1 — DOSW Manejo de Streams
 
 ## Datos personales:
-- Nombre y Apellido: Julian ______________
-- Codigo de Estudiante: ______________
-- Curso: ______________
+- Nombre y Apellido: Julian Morales
+- Codigo de Estudiante: 1000091825
+- Curso: DOSW
 
 ---
 
