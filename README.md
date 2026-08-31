@@ -1,4 +1,4 @@
-﻿# DOSW_BITACORA
+# DOSW_BITACORA
 
 Bitacora del curso **DOSW** (Java 21/24 + Git) — Streams, Expresiones Lambda y Programacion Funcional.
 
@@ -6,27 +6,96 @@ Estructura: `src/main/dosw/semana_1/streams` (Streams basicos) y `src/main/dosw/
 
 ---
 
-## Comandos de Git utilizados en este repositorio
+## Comandos de Git — Guia de referencia
 
-Este proyecto se trabajó siguiendo un flujo de ramas (Git Flow simplificado): `main` y `develop` como ramas permanentes, una rama por semana (`feature/semana-n-dosw`) y una rama corta por cada ejercicio (`feature/semana-n-dosw-ejercicio-n`).
+Este proyecto se trabajo siguiendo un flujo de ramas (Git Flow simplificado): `main` y `develop` como ramas permanentes, una rama por semana (`feature/semana-n-dosw`) y una rama corta por cada ejercicio (`feature/semana-n-dosw-ejercicio-n`). Abajo se documentan tanto los comandos que se usaron en este repo como los demas comandos de uso comun en Git, para tener una referencia completa.
 
-| Comando | Qué hace | Cuándo se usó aquí |
+### Configuracion inicial
+
+| Comando | Que hace | Se uso aqui |
 |---|---|---|
-| `git clone <url>` | Descarga el repositorio completo a la máquina local | Al empezar a trabajar en un equipo nuevo |
-| `git status` | Muestra el estado actual: qué archivos están modificados, en staging, o sin trackear | Antes de cada `add`/`commit`, para confirmar qué se va a guardar |
-| `git add <archivo>` | Mueve un archivo al "staging area" (lo prepara para el próximo commit) | Se usó por archivo, no `git add .`, para mantener commits específicos por ejercicio |
-| `git commit -m "mensaje"` | Guarda los cambios en staging como un punto fijo del historial | Un commit por ejercicio, con mensajes tipo `feat: ejercicio N semana X` |
-| `git push origin <rama>` / `git push -u origin <rama>` | Sube los commits locales al repositorio remoto (GitHub). El `-u` además vincula la rama local con la remota para que futuros `push`/`pull` no necesiten especificar destino | Al terminar cada rama de semana y al sincronizar `develop`/`main` |
-| `git checkout -b <rama>` | Crea una rama nueva y se cambia a ella en un solo paso | Para crear cada rama de ejercicio y de semana |
-| `git checkout <rama>` | Cambia a una rama que ya existe | Para volver a la rama de la semana después de terminar un ejercicio |
-| `git merge --no-ff <rama> -m "mensaje"` | Fusiona una rama sobre la actual. `--no-ff` fuerza un commit de merge explícito (en vez de "aplanar" el historial), así queda evidencia de que existió la rama | Al fusionar cada ejercicio a su rama de semana, y cada semana a `develop` |
-| `git branch -d <rama>` | Borra una rama local (solo si ya fue fusionada) | Después de fusionar cada rama de ejercicio — las ramas de semana NO se borran, quedan como evidencia |
-| `git branch` | Lista las ramas locales y marca en cuál se está parado | Para verificar en qué rama se estaba trabajando |
-| `git log --oneline --graph --all` | Muestra el historial de commits en forma de árbol, con las ramas | Para revisar que los merges quedaran bien encadenados |
-| `git remote -v` / `git remote set-url origin <url>` | Muestra o cambia la URL del repositorio remoto | Al renombrar el repositorio en GitHub, para actualizar la URL local |
-| `git rm -r --cached <carpeta>` | Deja de trackear una carpeta sin borrarla del disco | Para sacar `.idea/` y `out/` del control de versiones después de agregarlas a `.gitignore` |
+| `git config --global user.name "Nombre"` | Define el nombre que aparece en los commits, a nivel global (todos los repos del equipo) | No, ya estaba configurado en el equipo |
+| `git config --global user.email "correo"` | Define el correo asociado a los commits | No, ya estaba configurado en el equipo |
+| `git init` | Convierte una carpeta comun en un repositorio Git (crea la carpeta `.git`) | No, se partio de un repo ya clonado |
+| `git clone <url>` | Descarga un repositorio remoto completo (con su historial) a la maquina local | Si, al empezar a trabajar |
 
-**Flujo típico para un ejercicio nuevo:**
+### Ver el estado y el historial
+
+| Comando | Que hace | Se uso aqui |
+|---|---|---|
+| `git status` | Muestra que archivos estan modificados, en staging, o sin trackear | Si, constantemente antes de cada `add`/`commit` |
+| `git diff` | Muestra linea por linea los cambios sin confirmar (working directory vs staging) | No |
+| `git diff --staged` | Muestra los cambios que ya estan en staging, listos para el commit | No |
+| `git log` | Muestra el historial completo de commits (autor, fecha, mensaje) | No directamente, se uso la variante de abajo |
+| `git log --oneline --graph --all` | Muestra el historial en forma de arbol compacto, con todas las ramas | Si, para revisar que los merges quedaran bien encadenados |
+| `git blame <archivo>` | Muestra quien modifico por ultima vez cada linea de un archivo | No |
+
+### Area de staging (preparar los cambios)
+
+| Comando | Que hace | Se uso aqui |
+|---|---|---|
+| `git add <archivo>` | Mueve un archivo especifico al staging area | Si, por archivo (no `git add .`) para mantener commits especificos por ejercicio |
+| `git add .` | Agrega todos los archivos modificados/nuevos de la carpeta actual al staging | No, se evito para no mezclar archivos de distintos ejercicios en un commit |
+| `git restore --staged <archivo>` | Saca un archivo del staging sin perder los cambios (lo "des-agrega") | No |
+| `git restore <archivo>` | Descarta los cambios de un archivo en el working directory (vuelve a la ultima version commiteada) | No |
+| `git rm <archivo>` | Elimina un archivo del repositorio y del disco | No |
+| `git rm -r --cached <carpeta>` | Deja de trackear una carpeta sin borrarla del disco | Si, para sacar `.idea/` y `out/` del control de versiones tras agregarlas a `.gitignore` |
+| `git mv <origen> <destino>` | Mueve o renombra un archivo y lo registra como tal en Git | No |
+
+### Commits
+
+| Comando | Que hace | Se uso aqui |
+|---|---|---|
+| `git commit -m "mensaje"` | Guarda los cambios en staging como un punto fijo del historial | Si, un commit por ejercicio, mensajes tipo `feat: ejercicio N semana X` |
+| `git commit --amend` | Modifica el ultimo commit (mensaje o contenido) en vez de crear uno nuevo | No |
+| `git commit -am "mensaje"` | Combina `add` (solo de archivos ya trackeados) y `commit` en un paso | No |
+
+### Ramas
+
+| Comando | Que hace | Se uso aqui |
+|---|---|---|
+| `git branch` | Lista las ramas locales y marca en cual se esta parado | Si, para verificar en que rama se estaba trabajando |
+| `git branch <nombre>` | Crea una rama nueva sin cambiarse a ella | No |
+| `git checkout -b <rama>` | Crea una rama nueva y se cambia a ella en un solo paso | Si, para cada rama de ejercicio y de semana |
+| `git checkout <rama>` | Cambia a una rama que ya existe | Si, para volver a la rama de la semana tras cada ejercicio |
+| `git switch <rama>` | Version moderna de `checkout` solo para cambiar de rama (mas clara, sin ambiguedad con archivos) | No, se uso `checkout` por costumbre |
+| `git branch -d <rama>` | Borra una rama local, solo si ya fue fusionada (seguro) | Si, tras fusionar cada rama de ejercicio |
+| `git branch -D <rama>` | Borra una rama local a la fuerza, aunque no este fusionada (peligroso) | No |
+| `git merge --no-ff <rama> -m "mensaje"` | Fusiona una rama sobre la actual, forzando un commit de merge explicito para dejar evidencia de que existio la rama | Si, ejercicio -> semana, y semana -> develop |
+| `git merge <rama>` (fast-forward) | Fusiona una rama simplemente moviendo el puntero, sin commit de merge, cuando no hay divergencia | No, se prefirio `--no-ff` para dejar rastro |
+| `git rebase <rama>` | Reaplica los commits de la rama actual sobre otra base, reescribiendo el historial (alternativa a merge) | No |
+
+### Trabajo con el repositorio remoto
+
+| Comando | Que hace | Se uso aqui |
+|---|---|---|
+| `git remote -v` | Muestra las URLs del/los repositorio(s) remoto(s) configurados | Si, para verificar la URL tras renombrar el repo |
+| `git remote set-url origin <url>` | Cambia la URL del remoto `origin` | Si, al renombrar el repositorio en GitHub |
+| `git remote add <nombre> <url>` | Agrega un nuevo repositorio remoto (por ejemplo, un fork) | No |
+| `git push origin <rama>` | Sube los commits locales de una rama al remoto | Si |
+| `git push -u origin <rama>` | Igual que arriba, pero ademas vincula la rama local con la remota (`-u` = upstream), para que futuros `push`/`pull` no necesiten especificar destino | Si, la primera vez que se subio cada rama nueva |
+| `git pull` | Trae los cambios del remoto y los fusiona en la rama actual (equivale a `fetch` + `merge`) | No, se trabajo siempre desde un solo equipo |
+| `git fetch` | Descarga los cambios del remoto sin fusionarlos automaticamente | No |
+
+### Deshacer cambios
+
+| Comando | Que hace | Se uso aqui |
+|---|---|---|
+| `git reset <archivo>` | Saca un archivo del staging (equivalente moderno: `git restore --staged`) | Si, una vez, para deshacer un `add` incorrecto |
+| `git reset --soft <commit>` | Mueve la rama a un commit anterior, dejando los cambios en staging | No |
+| `git reset --hard <commit>` | Mueve la rama a un commit anterior y descarta todos los cambios (peligroso, se pierde trabajo) | No |
+| `git revert <commit>` | Crea un commit nuevo que deshace los cambios de un commit especifico, sin reescribir el historial (seguro para ramas compartidas) | No |
+| `git stash` | Guarda temporalmente los cambios sin commitear, para poder cambiar de rama con el working directory limpio | No |
+| `git stash pop` | Recupera los cambios guardados con `stash` | No |
+
+### Otros
+
+| Comando | Que hace | Se uso aqui |
+|---|---|---|
+| `git tag <nombre>` | Marca un commit especifico como version (ej. `v1.0`) | No |
+| `.gitignore` (archivo, no comando) | Lista de patrones de archivos/carpetas que Git debe ignorar siempre | Si, para excluir `.idea/` y `out/` |
+
+**Flujo tipico usado en este proyecto para un ejercicio nuevo:**
 ```powershell
 git checkout -b feature/semana-N-dosw-ejercicio-X
 git add ruta/al/Archivo.java
@@ -37,7 +106,6 @@ git branch -d feature/semana-N-dosw-ejercicio-X
 ```
 
 ---
-
 # SEMANA No 1 — DOSW Manejo de Streams
 
 ## Datos personales:
@@ -1227,6 +1295,930 @@ Se combinan varios pipelines independientes sobre la misma lista: `groupingBy()+
 ---
 
 > NOTA: se siguio esta estructura por los 20 ejercicios correspondientes de este taller.
+
+---
+# SEMANA No 4 — Patrones de Diseno Combinados
+
+## Datos del estudiante:
+- Nombre y Apellido: Julian ______________
+- Codigo de Estudiante: ______________
+- Curso: ______________
+
+Cada ejercicio combina exactamente 2 patrones de diseno para resolver un caso real. Para cada uno se documenta: el rol de cada patron, como interactuan entre si, el codigo funcional que los implementa y por que esa combinacion es superior a resolverlo sin patrones.
+
+---
+
+### Ejercicio 01 — Plataforma de Pagos Inteligentes
+**Patrones combinados:** Strategy + Factory Method
+
+Una aplicacion de e-commerce permite pagar con tarjeta, PSE, Nequi y PayPal. Cada medio tiene una logica distinta pero el flujo de compra es el mismo. Segun el pais del usuario, el sistema construye el proveedor de pago correcto (Colombia -> PSE/Nequi, USA -> PayPal).
+
+**Rol de cada patron:**
+**Strategy** encapsula cada algoritmo de pago en una clase independiente (`TarjetaStrategy`, `PseStrategy`, `NequiStrategy`, `PayPalStrategy`); el `Checkout` trabaja contra la interfaz `PaymentStrategy` sin importar cual medio se use. **Factory Method** (`ColombiaPaymentFactory`, `UsaPaymentFactory`) crea el proveedor correcto segun el pais, para que el cliente no tenga que saber que clase concreta instanciar.
+
+**Como interactuan:**
+El usuario selecciona su pais -> la Factory construye el gateway correcto -> ese gateway implementa `PaymentStrategy` -> el `Checkout` llama `strategy.process(amount)` sin conocer la implementacion concreta.
+
+**Codigo implementado:**
+```java
+package dosw.semana_4.patrones.ejercicio1;
+
+/**
+ * Ejercicio 01 - Plataforma de Pagos Inteligentes
+ * Patrones: Strategy + Factory Method
+ */
+public class Ejercicio1 {
+
+    interface PaymentStrategy { void process(double amount); }
+
+    static class TarjetaStrategy implements PaymentStrategy {
+        public void process(double amount) {
+            System.out.println("Pago de $" + amount + " procesado con Tarjeta de Credito");
+        }
+    }
+    static class PseStrategy implements PaymentStrategy {
+        public void process(double amount) {
+            System.out.println("Pago de $" + amount + " procesado con PSE");
+        }
+    }
+    static class NequiStrategy implements PaymentStrategy {
+        public void process(double amount) {
+            System.out.println("Pago de $" + amount + " procesado con Nequi");
+        }
+    }
+    static class PayPalStrategy implements PaymentStrategy {
+        public void process(double amount) {
+            System.out.println("Payment of $" + amount + " processed with PayPal");
+        }
+    }
+
+    interface PaymentFactory { PaymentStrategy create(String metodo); }
+
+    static class ColombiaPaymentFactory implements PaymentFactory {
+        public PaymentStrategy create(String metodo) {
+            return switch (metodo) {
+                case "TARJETA" -> new TarjetaStrategy();
+                case "PSE" -> new PseStrategy();
+                case "NEQUI" -> new NequiStrategy();
+                default -> throw new IllegalArgumentException("Metodo no soportado en Colombia: " + metodo);
+            };
+        }
+    }
+    static class UsaPaymentFactory implements PaymentFactory {
+        public PaymentStrategy create(String metodo) {
+            return switch (metodo) {
+                case "PAYPAL" -> new PayPalStrategy();
+                default -> throw new IllegalArgumentException("Metodo no soportado en USA: " + metodo);
+            };
+        }
+    }
+
+    static class Checkout {
+        private final PaymentStrategy strategy;
+        Checkout(PaymentStrategy strategy) { this.strategy = strategy; }
+        void pay(double amount) { strategy.process(amount); }
+    }
+
+    public static void main(String[] args) {
+        PaymentFactory factoryColombia = new ColombiaPaymentFactory();
+        Checkout checkout1 = new Checkout(factoryColombia.create("NEQUI"));
+        checkout1.pay(150000);
+
+        PaymentFactory factoryUsa = new UsaPaymentFactory();
+        Checkout checkout2 = new Checkout(factoryUsa.create("PAYPAL"));
+        checkout2.pay(49.99);
+    }
+}
+```
+
+**Captura de ejecucion:** _(pega aqui la captura de consola al ejecutar `Ejercicio1.java`)_
+
+**Justificacion — por que esta combinacion es superior a resolverlo sin patrones:**
+Sin Factory, el `Checkout` tendria que conocer que Strategy instanciar segun el pais, acoplando la logica de seleccion de pais con la logica de pago. Separando ambas responsabilidades, agregar un nuevo pais o un nuevo medio de pago no obliga a tocar el `Checkout`.
+
+---
+
+### Ejercicio 02 — Sistema de Notificaciones Multicanal
+**Patrones combinados:** Observer + Factory Method
+
+Cuando un pedido cambia de estado (pendiente -> enviado -> entregado), el sistema notifica por correo, SMS y push. No todos los usuarios tienen activos los mismos canales, y cada canal formatea el mensaje distinto.
+
+**Rol de cada patron:**
+**Observer** desacopla el `Pedido` (Subject) de los canales: `EmailNotifier`, `SmsNotifier` y `PushNotifier` son Observers que reaccionan cuando el pedido cambia de estado, sin que el Pedido conozca sus detalles. **Factory Method** (`EmailMessageFactory`, `SmsMessageFactory`, `PushMessageFactory`) construye el mensaje con el formato correcto para cada canal (HTML, texto plano, JSON).
+
+**Como interactuan:**
+El Pedido cambia de estado -> notifica a todos los Observers activos -> cada Observer usa su propia Factory para construir el mensaje correcto para su canal -> lo envia.
+
+**Codigo implementado:**
+```java
+package dosw.semana_4.patrones.ejercicio2;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Ejercicio 02 - Sistema de Notificaciones Multicanal
+ * Patrones: Observer + Factory Method
+ */
+public class Ejercicio2 {
+
+    static class OrderEvent {
+        String estado;
+        OrderEvent(String estado) { this.estado = estado; }
+    }
+
+    interface Message { String build(); }
+    static class EmailMessage implements Message {
+        OrderEvent event;
+        EmailMessage(OrderEvent e) { event = e; }
+        public String build() { return "<html><body>Tu pedido cambio a: " + event.estado + "</body></html>"; }
+    }
+    static class SmsMessage implements Message {
+        OrderEvent event;
+        SmsMessage(OrderEvent e) { event = e; }
+        public String build() {
+            String texto = "Pedido: " + event.estado;
+            return texto.length() > 160 ? texto.substring(0, 160) : texto;
+        }
+    }
+    static class PushMessage implements Message {
+        OrderEvent event;
+        PushMessage(OrderEvent e) { event = e; }
+        public String build() { return "{\"estado\":\"" + event.estado + "\"}"; }
+    }
+
+    interface MessageFactory { Message build(OrderEvent event); }
+    static class EmailMessageFactory implements MessageFactory {
+        public Message build(OrderEvent event) { return new EmailMessage(event); }
+    }
+    static class SmsMessageFactory implements MessageFactory {
+        public Message build(OrderEvent event) { return new SmsMessage(event); }
+    }
+    static class PushMessageFactory implements MessageFactory {
+        public Message build(OrderEvent event) { return new PushMessage(event); }
+    }
+
+    interface NotificationObserver { void notify(OrderEvent event); }
+    static class EmailNotifier implements NotificationObserver {
+        MessageFactory factory = new EmailMessageFactory();
+        public void notify(OrderEvent event) {
+            System.out.println("[EMAIL] " + factory.build(event).build());
+        }
+    }
+    static class SmsNotifier implements NotificationObserver {
+        MessageFactory factory = new SmsMessageFactory();
+        public void notify(OrderEvent event) {
+            System.out.println("[SMS] " + factory.build(event).build());
+        }
+    }
+    static class PushNotifier implements NotificationObserver {
+        MessageFactory factory = new PushMessageFactory();
+        public void notify(OrderEvent event) {
+            System.out.println("[PUSH] " + factory.build(event).build());
+        }
+    }
+
+    static class Pedido {
+        private final List<NotificationObserver> observers = new ArrayList<>();
+        void addObserver(NotificationObserver o) { observers.add(o); }
+        void cambiarEstado(String estado) {
+            OrderEvent event = new OrderEvent(estado);
+            for (NotificationObserver o : observers) o.notify(event);
+        }
+    }
+
+    public static void main(String[] args) {
+        Pedido pedido = new Pedido();
+        pedido.addObserver(new EmailNotifier());
+        pedido.addObserver(new SmsNotifier());
+        pedido.addObserver(new PushNotifier());
+
+        pedido.cambiarEstado("enviado");
+        pedido.cambiarEstado("entregado");
+    }
+}
+```
+
+**Captura de ejecucion:** _(pega aqui la captura de consola al ejecutar `Ejercicio2.java`)_
+
+**Justificacion — por que esta combinacion es superior a resolverlo sin patrones:**
+Sin Factory, cada Observer tendria la logica de formateo del mensaje dispersa dentro de si mismo. Separando la construccion del mensaje (Factory) de la notificacion (Observer), agregar un canal nuevo (ej. WhatsApp) solo requiere un nuevo Observer + una nueva Factory, sin tocar el Pedido.
+
+---
+
+### Ejercicio 03 — Sistema de Reportes Empresariales
+**Patrones combinados:** Template Method + Factory Method
+
+La empresa genera reportes en PDF, Excel y CSV. Todos siguen los mismos 4 pasos (obtener datos, procesar, aplicar formato, exportar), pero cada formato implementa 'aplicar formato' y 'exportar' distinto. El sistema decide dinamicamente que tipo de reporte crear.
+
+**Rol de cada patron:**
+**Template Method** define en `ReportGenerator` el metodo final `generate()` que ejecuta los 4 pasos en orden fijo; las subclases (`PdfReport`, `ExcelReport`, `CsvReport`) solo sobreescriben los pasos variables (`applyFormat`, `exportFile`). **Factory Method** (`ReportFactory.create(tipo)`) crea la instancia correcta segun el tipo solicitado, sin que el cliente instancie directamente.
+
+**Como interactuan:**
+El cliente pide un reporte por tipo -> la Factory construye la subclase correspondiente -> el cliente llama `generate()` -> el Template Method ejecuta los 4 pasos fijos, usando la implementacion especifica del formato para los pasos variables.
+
+**Codigo implementado:**
+```java
+package dosw.semana_4.patrones.ejercicio3;
+
+/**
+ * Ejercicio 03 - Sistema de Reportes Empresariales
+ * Patrones: Template Method + Factory Method
+ */
+public class Ejercicio3 {
+
+    static abstract class ReportGenerator {
+        public final void generate() {
+            fetchData();
+            processData();
+            applyFormat();
+            exportFile();
+        }
+        void fetchData() { System.out.println("Obteniendo datos..."); }
+        void processData() { System.out.println("Procesando informacion..."); }
+        abstract void applyFormat();
+        abstract void exportFile();
+    }
+    static class PdfReport extends ReportGenerator {
+        void applyFormat() { System.out.println("Aplicando formato PDF"); }
+        void exportFile() { System.out.println("Exportando reporte.pdf"); }
+    }
+    static class ExcelReport extends ReportGenerator {
+        void applyFormat() { System.out.println("Aplicando formato Excel"); }
+        void exportFile() { System.out.println("Exportando reporte.xlsx"); }
+    }
+    static class CsvReport extends ReportGenerator {
+        void applyFormat() { System.out.println("Aplicando formato CSV"); }
+        void exportFile() { System.out.println("Exportando reporte.csv"); }
+    }
+
+    static class ReportFactory {
+        static ReportGenerator create(String tipo) {
+            return switch (tipo) {
+                case "PDF" -> new PdfReport();
+                case "EXCEL" -> new ExcelReport();
+                case "CSV" -> new CsvReport();
+                default -> throw new IllegalArgumentException("Tipo de reporte no soportado: " + tipo);
+            };
+        }
+    }
+
+    public static void main(String[] args) {
+        ReportGenerator reportePdf = ReportFactory.create("PDF");
+        System.out.println("--- Generando reporte PDF ---");
+        reportePdf.generate();
+
+        ReportGenerator reporteCsv = ReportFactory.create("CSV");
+        System.out.println("--- Generando reporte CSV ---");
+        reporteCsv.generate();
+    }
+}
+```
+
+**Captura de ejecucion:** _(pega aqui la captura de consola al ejecutar `Ejercicio3.java`)_
+
+**Justificacion — por que esta combinacion es superior a resolverlo sin patrones:**
+Si el algoritmo completo fuera intercambiable se usaria Strategy; aqui el esqueleto (4 pasos) es fijo y solo 2 pasos varian, por eso Template Method es mas preciso. Combinado con Factory, el cliente ni siquiera necesita saber que subclases existen.
+
+---
+
+### Ejercicio 04 — Plataforma de Videojuegos: Personajes
+**Patrones combinados:** Builder + Decorator
+
+Un videojuego crea guerreros con armadura, arma y habilidad. El personaje se construye al inicio de la partida, pero sus poderes pueden aumentar dinamicamente durante el juego (escudo, velocidad extra).
+
+**Rol de cada patron:**
+**Builder** (`WarriorBuilder`) construye el personaje paso a paso con `setArmor().setWeapon().setSkill().build()`, evitando un constructor con muchos parametros. **Decorator** (`ShieldDecorator`, `SpeedDecorator`) envuelve el personaje ya construido para anadirle poderes temporales en tiempo de ejecucion, sin modificar la clase base.
+
+**Como interactuan:**
+El Builder crea el personaje base configurable al inicio de la partida -> durante la partida, los Decorators envuelven el personaje con poderes temporales -> al terminar el efecto, el wrapper se descarta sin afectar la clase base.
+
+**Codigo implementado:**
+```java
+package dosw.semana_4.patrones.ejercicio4;
+
+/**
+ * Ejercicio 04 - Plataforma de Videojuegos: Personajes
+ * Patrones: Builder + Decorator
+ */
+public class Ejercicio4 {
+
+    interface Character { String attack(); }
+
+    static class Warrior implements Character {
+        private final String armor;
+        private final String weapon;
+        private final String skill;
+        Warrior(String armor, String weapon, String skill) {
+            this.armor = armor; this.weapon = weapon; this.skill = skill;
+        }
+        public String attack() {
+            return "Ataque base (armadura:" + armor + ", arma:" + weapon + ", habilidad:" + skill + ")";
+        }
+    }
+
+    static class WarriorBuilder {
+        private String armor = "ninguna";
+        private String weapon = "punios";
+        private String skill = "ninguna";
+        WarriorBuilder setArmor(String a) { this.armor = a; return this; }
+        WarriorBuilder setWeapon(String w) { this.weapon = w; return this; }
+        WarriorBuilder setSkill(String s) { this.skill = s; return this; }
+        Warrior build() { return new Warrior(armor, weapon, skill); }
+    }
+
+    static abstract class CharacterDecorator implements Character {
+        protected final Character wrapped;
+        CharacterDecorator(Character wrapped) { this.wrapped = wrapped; }
+    }
+    static class ShieldDecorator extends CharacterDecorator {
+        ShieldDecorator(Character c) { super(c); }
+        public String attack() { return wrapped.attack() + " + escudo de hielo activo"; }
+    }
+    static class SpeedDecorator extends CharacterDecorator {
+        SpeedDecorator(Character c) { super(c); }
+        public String attack() { return wrapped.attack() + " + velocidad extra"; }
+    }
+
+    public static void main(String[] args) {
+        Character warrior = new WarriorBuilder()
+                .setArmor("acero")
+                .setWeapon("espada")
+                .setSkill("furia")
+                .build();
+
+        System.out.println(warrior.attack());
+
+        Character powered = new ShieldDecorator(new SpeedDecorator(warrior));
+        System.out.println(powered.attack());
+    }
+}
+```
+
+**Captura de ejecucion:** _(pega aqui la captura de consola al ejecutar `Ejercicio4.java`)_
+
+**Justificacion — por que esta combinacion es superior a resolverlo sin patrones:**
+Son momentos distintos del ciclo de vida: Builder resuelve la construccion inicial (evita constructores gigantes); Decorator resuelve la variacion dinamica de comportamiento (evita una explosion combinatoria de subclases para cada combinacion de poderes).
+
+---
+
+### Ejercicio 05 — Integracion con Sistema Bancario Antiguo
+**Patrones combinados:** Adapter + Facade
+
+El sistema moderno usa `PaymentProcessor` con metodos modernos. El banco antiguo expone `LegacyBankService` con metodos incompatibles y 8 pasos de inicializacion que los desarrolladores no deberian conocer.
+
+**Rol de cada patron:**
+**Adapter** (`LegacyBankAdapter`) hace que `LegacyBankService` sea compatible con `PaymentProcessor`, traduciendo internamente el monto a centavos y llamando `executeTransaction`. **Facade** (`BankFacade`) expone un metodo simple `procesarPago(monto)` que orquesta internamente la inicializacion y delega al Adapter, ocultando toda la complejidad.
+
+**Como interactuan:**
+El desarrollador llama `BankFacade.procesarPago(monto)` -> la Facade inicializa conexion, sesion y contexto -> delega al `LegacyBankAdapter` -> el Adapter traduce al formato legacy -> `LegacyBankService` ejecuta. El desarrollador nunca toca el servicio legacy.
+
+**Codigo implementado:**
+```java
+package dosw.semana_4.patrones.ejercicio5;
+
+/**
+ * Ejercicio 05 - Integracion con Sistema Bancario Antiguo
+ * Patrones: Adapter + Facade
+ */
+public class Ejercicio5 {
+
+    static class LegacyBankService {
+        void executeTransaction(String account, int cents) {
+            System.out.println("[LEGACY] Ejecutando transaccion en cuenta " + account + " por " + cents + " centavos");
+        }
+        boolean verifyBalance(String account, int cents) {
+            System.out.println("[LEGACY] Verificando saldo de " + account);
+            return true;
+        }
+    }
+
+    interface PaymentProcessor { void pay(double amount); }
+
+    static class LegacyBankAdapter implements PaymentProcessor {
+        private final LegacyBankService legacy;
+        private final String account;
+        LegacyBankAdapter(LegacyBankService legacy, String account) {
+            this.legacy = legacy; this.account = account;
+        }
+        public void pay(double amount) {
+            int cents = (int) Math.round(amount * 100);
+            legacy.verifyBalance(account, cents);
+            legacy.executeTransaction(account, cents);
+        }
+    }
+
+    static class BankFacade {
+        private final PaymentProcessor adapter;
+        BankFacade() {
+            System.out.println("Inicializando conexion...");
+            System.out.println("Abriendo sesion segura...");
+            System.out.println("Cargando contexto de cuenta...");
+            this.adapter = new LegacyBankAdapter(new LegacyBankService(), "ACC-001");
+        }
+        void procesarPago(double monto) {
+            adapter.pay(monto);
+        }
+    }
+
+    public static void main(String[] args) {
+        BankFacade facade = new BankFacade();
+        facade.procesarPago(250000.50);
+    }
+}
+```
+
+**Captura de ejecucion:** _(pega aqui la captura de consola al ejecutar `Ejercicio5.java`)_
+
+**Justificacion — por que esta combinacion es superior a resolverlo sin patrones:**
+Adapter resuelve 'hablar el idioma del otro sistema'; Facade resuelve 'no me cuentes todos los detalles, dame lo simple'. Son complementarios: la Facade usa el Adapter internamente, cada uno resolviendo un problema distinto de la integracion.
+
+---
+
+### Ejercicio 06 — Motor de Recomendaciones
+**Patrones combinados:** Strategy + Observer
+
+Una plataforma tipo Netflix usa algoritmos de recomendacion por genero, historial y popularidad. Cuando el usuario cambia sus preferencias, la pagina principal, notificaciones y sugeridos deben actualizarse automaticamente.
+
+**Rol de cada patron:**
+**Strategy** (`GenreStrategy`, `HistoryStrategy`, `PopularityStrategy`) permite intercambiar el algoritmo de recomendacion en tiempo de ejecucion sin reiniciar el motor. **Observer** (`HomePageComponent`, `NotificationService`, `SuggestedListComponent`) notifica automaticamente a todos los componentes cuando cambian las preferencias del usuario.
+
+**Como interactuan:**
+El usuario cambia sus preferencias -> el `UserProfile` (Subject) notifica a sus Observers -> cada Observer reconsulta las recomendaciones usando el nuevo algoritmo Strategy configurado -> la UI se actualiza sin polling.
+
+**Codigo implementado:**
+```java
+package dosw.semana_4.patrones.ejercicio6;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Ejercicio 06 - Motor de Recomendaciones
+ * Patrones: Strategy + Observer
+ */
+public class Ejercicio6 {
+
+    static class Content {
+        String titulo;
+        Content(String titulo) { this.titulo = titulo; }
+        public String toString() { return titulo; }
+    }
+    static class User {
+        String nombre;
+        RecommendationAlgorithm algoritmo;
+        User(String nombre, RecommendationAlgorithm algoritmo) { this.nombre = nombre; this.algoritmo = algoritmo; }
+    }
+
+    interface RecommendationAlgorithm { List<Content> recommend(User user); }
+    static class GenreStrategy implements RecommendationAlgorithm {
+        public List<Content> recommend(User user) { return List.of(new Content("Accion 1"), new Content("Accion 2")); }
+    }
+    static class HistoryStrategy implements RecommendationAlgorithm {
+        public List<Content> recommend(User user) { return List.of(new Content("Basado en tu historial")); }
+    }
+    static class PopularityStrategy implements RecommendationAlgorithm {
+        public List<Content> recommend(User user) { return List.of(new Content("Tendencia global 1")); }
+    }
+
+    interface PreferenceObserver { void onPreferenceChanged(User user); }
+    static class HomePageComponent implements PreferenceObserver {
+        public void onPreferenceChanged(User user) {
+            System.out.println("[HomePage] Recargando con: " + user.algoritmo.recommend(user));
+        }
+    }
+    static class NotificationService implements PreferenceObserver {
+        public void onPreferenceChanged(User user) {
+            System.out.println("[Notificaciones] Nueva recomendacion para " + user.nombre);
+        }
+    }
+    static class SuggestedListComponent implements PreferenceObserver {
+        public void onPreferenceChanged(User user) {
+            System.out.println("[Sugeridos] Lista actualizada: " + user.algoritmo.recommend(user));
+        }
+    }
+
+    static class UserProfile {
+        User user;
+        List<PreferenceObserver> observers = new ArrayList<>();
+        UserProfile(User user) { this.user = user; }
+        void addObserver(PreferenceObserver o) { observers.add(o); }
+        void changeAlgorithm(RecommendationAlgorithm algoritmo) {
+            user.algoritmo = algoritmo;
+            for (PreferenceObserver o : observers) o.onPreferenceChanged(user);
+        }
+    }
+
+    public static void main(String[] args) {
+        User julian = new User("Julian", new GenreStrategy());
+        UserProfile profile = new UserProfile(julian);
+        profile.addObserver(new HomePageComponent());
+        profile.addObserver(new NotificationService());
+        profile.addObserver(new SuggestedListComponent());
+
+        profile.changeAlgorithm(new PopularityStrategy());
+        profile.changeAlgorithm(new HistoryStrategy());
+    }
+}
+```
+
+**Captura de ejecucion:** _(pega aqui la captura de consola al ejecutar `Ejercicio6.java`)_
+
+**Justificacion — por que esta combinacion es superior a resolverlo sin patrones:**
+Strategy responde 'como recomendar'; Observer responde 'a quien avisar que cambio el como'. Son ortogonales: cambiar el algoritmo (Strategy) dispara el aviso (Observer) a los componentes que deben re-renderizarse.
+
+---
+
+### Ejercicio 07 — Flujo de Aprobacion de Documentos
+**Patrones combinados:** Chain of Responsibility + State
+
+Los documentos pasan por revision del autor y del lider (entre otras etapas). Ademas tienen estados propios: borrador, en revision, aprobado, rechazado. La transicion de estado depende del resultado de cada handler de la cadena.
+
+**Rol de cada patron:**
+**Chain of Responsibility** (`AutorHandler`, `LiderHandler`) encadena los validadores; cada handler decide si procesa el documento segun su estado actual o lo pasa al siguiente. **State** (`DraftState`, `InReviewState`, `ApprovedState`, `RejectedState`) maneja las transiciones de estado del documento, eliminando los switch/if de estado.
+
+**Como interactuan:**
+Un handler de la cadena procesa el documento -> segun su resultado invoca `document.approve()` o `document.reject()` -> el objeto State actual ejecuta la transicion correspondiente -> el documento nunca tiene un switch de estados explicito.
+
+**Codigo implementado:**
+```java
+package dosw.semana_4.patrones.ejercicio7;
+
+/**
+ * Ejercicio 07 - Flujo de Aprobacion de Documentos
+ * Patrones: Chain of Responsibility + State
+ */
+public class Ejercicio7 {
+
+    static class Document {
+        String nombre;
+        DocumentState state;
+        Document(String nombre) { this.nombre = nombre; this.state = new DraftState(); }
+        void approve() { state.approve(this); }
+        void reject() { state.reject(this); }
+        void setState(DocumentState state) {
+            this.state = state;
+            System.out.println("Documento '" + nombre + "' ahora esta en estado: " + state.getClass().getSimpleName());
+        }
+    }
+
+    interface DocumentState {
+        void approve(Document doc);
+        void reject(Document doc);
+    }
+    static class DraftState implements DocumentState {
+        public void approve(Document doc) { doc.setState(new InReviewState()); }
+        public void reject(Document doc) { System.out.println("No se puede rechazar un borrador"); }
+    }
+    static class InReviewState implements DocumentState {
+        public void approve(Document doc) { doc.setState(new ApprovedState()); }
+        public void reject(Document doc) { doc.setState(new RejectedState()); }
+    }
+    static class ApprovedState implements DocumentState {
+        public void approve(Document doc) { System.out.println("Ya esta aprobado"); }
+        public void reject(Document doc) { System.out.println("No se puede rechazar un documento aprobado"); }
+    }
+    static class RejectedState implements DocumentState {
+        public void approve(Document doc) { System.out.println("No se puede aprobar un documento rechazado"); }
+        public void reject(Document doc) { System.out.println("Ya esta rechazado"); }
+    }
+
+    static abstract class DocumentHandler {
+        private DocumentHandler next;
+        DocumentHandler setNext(DocumentHandler next) { this.next = next; return next; }
+        void handle(Document doc) {
+            if (canHandle(doc)) process(doc);
+            else if (next != null) next.handle(doc);
+            else System.out.println("Nadie mas puede procesar el documento");
+        }
+        abstract boolean canHandle(Document doc);
+        abstract void process(Document doc);
+    }
+    static class AutorHandler extends DocumentHandler {
+        boolean canHandle(Document doc) { return doc.state instanceof DraftState; }
+        void process(Document doc) {
+            System.out.println("Revision del autor OK");
+            doc.approve();
+        }
+    }
+    static class LiderHandler extends DocumentHandler {
+        boolean canHandle(Document doc) { return doc.state instanceof InReviewState; }
+        void process(Document doc) {
+            System.out.println("Revision del lider OK");
+            doc.approve();
+        }
+    }
+
+    public static void main(String[] args) {
+        Document doc = new Document("Contrato-001");
+        DocumentHandler autor = new AutorHandler();
+        DocumentHandler lider = new LiderHandler();
+        autor.setNext(lider);
+
+        System.out.println("--- Primera pasada por la cadena ---");
+        autor.handle(doc);
+        System.out.println("--- Segunda pasada por la cadena ---");
+        autor.handle(doc);
+    }
+}
+```
+
+**Captura de ejecucion:** _(pega aqui la captura de consola al ejecutar `Ejercicio7.java`)_
+
+**Justificacion — por que esta combinacion es superior a resolverlo sin patrones:**
+Sin State, cada metodo de `Document` tendria un switch(estado){...}; con State, cada estado encapsula su propio comportamiento y sabe a que estado puede transicionar. El documento no sabe en que estado esta -- su estado sabe que hacer.
+
+---
+
+### Ejercicio 08 — Sistema de Pedidos en Restaurante
+**Patrones combinados:** Builder + Observer
+
+El cliente construye un pedido eligiendo tamano, carne, toppings y acompanamientos. Despues de confirmado, el sistema debe notificar a cocina, facturacion y domicilio sin que el pedido los conozca directamente.
+
+**Rol de cada patron:**
+**Builder** (`PedidoBuilder`) construye el pedido personalizado paso a paso, evitando un constructor con todos los ingredientes como parametros; el `Pedido` resultante es inmutable una vez construido. **Observer** (`KitchenService`, `BillingService`, `DeliveryService`) notifica a los subsistemas cuando el pedido se confirma.
+
+**Como interactuan:**
+El cliente configura el pedido con el Builder -> llama `build()` que retorna un Pedido inmutable -> el sistema llama `pedido.confirm()` -> el Pedido notifica a todos sus Observers -> cada subsistema reacciona de forma independiente.
+
+**Codigo implementado:**
+```java
+package dosw.semana_4.patrones.ejercicio8;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Ejercicio 08 - Sistema de Pedidos en Restaurante
+ * Patrones: Builder + Observer
+ */
+public class Ejercicio8 {
+
+    enum Size { SMALL, MEDIUM, LARGE }
+    enum Meat { SIMPLE_BEEF, DOUBLE_BEEF, CHICKEN }
+
+    static class Pedido {
+        final Size size;
+        final Meat meat;
+        final List<String> toppings;
+        final List<String> sides;
+        private final List<PedidoObserver> observers = new ArrayList<>();
+
+        Pedido(Size size, Meat meat, List<String> toppings, List<String> sides) {
+            this.size = size; this.meat = meat; this.toppings = toppings; this.sides = sides;
+        }
+        void addObserver(PedidoObserver o) { observers.add(o); }
+        void confirm() {
+            System.out.println("Pedido confirmado: " + size + " " + meat + " con " + toppings + " y " + sides);
+            for (PedidoObserver o : observers) o.onPedidoConfirmado(this);
+        }
+    }
+
+    static class PedidoBuilder {
+        private Size size = Size.MEDIUM;
+        private Meat meat = Meat.SIMPLE_BEEF;
+        private final List<String> toppings = new ArrayList<>();
+        private final List<String> sides = new ArrayList<>();
+        PedidoBuilder setSize(Size s) { this.size = s; return this; }
+        PedidoBuilder setMeat(Meat m) { this.meat = m; return this; }
+        PedidoBuilder addTopping(String... t) { toppings.addAll(List.of(t)); return this; }
+        PedidoBuilder addSide(String... s) { sides.addAll(List.of(s)); return this; }
+        Pedido build() { return new Pedido(size, meat, List.copyOf(toppings), List.copyOf(sides)); }
+    }
+
+    interface PedidoObserver { void onPedidoConfirmado(Pedido pedido); }
+    static class KitchenService implements PedidoObserver {
+        public void onPedidoConfirmado(Pedido pedido) { System.out.println("[Cocina] Preparando pedido..."); }
+    }
+    static class BillingService implements PedidoObserver {
+        public void onPedidoConfirmado(Pedido pedido) { System.out.println("[Facturacion] Generando cuenta..."); }
+    }
+    static class DeliveryService implements PedidoObserver {
+        public void onPedidoConfirmado(Pedido pedido) { System.out.println("[Domicilio] Preparando ruta..."); }
+    }
+
+    public static void main(String[] args) {
+        Pedido pedido = new PedidoBuilder()
+                .setSize(Size.LARGE)
+                .setMeat(Meat.DOUBLE_BEEF)
+                .addTopping("queso", "lechuga")
+                .addSide("papas", "gaseosa")
+                .build();
+
+        pedido.addObserver(new KitchenService());
+        pedido.addObserver(new BillingService());
+        pedido.addObserver(new DeliveryService());
+
+        pedido.confirm();
+    }
+}
+```
+
+**Captura de ejecucion:** _(pega aqui la captura de consola al ejecutar `Ejercicio8.java`)_
+
+**Justificacion — por que esta combinacion es superior a resolverlo sin patrones:**
+Builder garantiza que el pedido este completo y valido antes de existir; Observer garantiza que la confirmacion desencadene reacciones sin acoplamiento directo entre el Pedido y cada subsistema. Son momentos distintos del ciclo de vida del pedido.
+
+---
+
+### Ejercicio 09 — Sistema de Autenticacion Empresarial
+**Patrones combinados:** Strategy + Chain of Responsibility
+
+La empresa tiene varios metodos de autenticacion (contrasena, Google, biometria). Una vez autenticado, la solicitud pasa por validacion de credenciales, permisos, ubicacion y horario laboral en secuencia.
+
+**Rol de cada patron:**
+**Strategy** (`PasswordStrategy`, `GoogleStrategy`, `BiometricStrategy`) selecciona el mecanismo de autenticacion segun el tipo de usuario. **Chain of Responsibility** (`CredentialValidator` -> `PermissionValidator` -> `LocationValidator` -> `TimeValidator`) procesa las validaciones posteriores en secuencia, donde cada una puede detener el flujo.
+
+**Como interactuan:**
+El usuario intenta acceder -> el `AuthService` selecciona la Strategy correcta y autentica -> el resultado pasa por la cadena de validadores -> si todos aprueban, se concede acceso.
+
+**Codigo implementado:**
+```java
+package dosw.semana_4.patrones.ejercicio9;
+
+/**
+ * Ejercicio 09 - Sistema de Autenticacion Empresarial
+ * Patrones: Strategy + Chain of Responsibility
+ */
+public class Ejercicio9 {
+
+    static class Credentials {
+        String usuario;
+        Credentials(String usuario) { this.usuario = usuario; }
+    }
+    static class AuthResult {
+        boolean success;
+        String usuario;
+        AuthResult(boolean success, String usuario) { this.success = success; this.usuario = usuario; }
+    }
+
+    interface AuthStrategy { AuthResult authenticate(Credentials c); }
+    static class PasswordStrategy implements AuthStrategy {
+        public AuthResult authenticate(Credentials c) {
+            System.out.println("Autenticando con usuario/contrasenia");
+            return new AuthResult(true, c.usuario);
+        }
+    }
+    static class GoogleStrategy implements AuthStrategy {
+        public AuthResult authenticate(Credentials c) {
+            System.out.println("Autenticando con Google");
+            return new AuthResult(true, c.usuario);
+        }
+    }
+    static class BiometricStrategy implements AuthStrategy {
+        public AuthResult authenticate(Credentials c) {
+            System.out.println("Autenticando con biometria");
+            return new AuthResult(true, c.usuario);
+        }
+    }
+
+    static class AccessDeniedException extends RuntimeException {
+        AccessDeniedException(String msg) { super(msg); }
+    }
+
+    static abstract class Validator {
+        private Validator next;
+        Validator setNext(Validator next) { this.next = next; return next; }
+        void validate(AuthResult result) {
+            check(result);
+            if (next != null) next.validate(result);
+        }
+        abstract void check(AuthResult result);
+    }
+    static class CredentialValidator extends Validator {
+        void check(AuthResult result) {
+            if (!result.success) throw new AccessDeniedException("Credenciales invalidas");
+            System.out.println("Credenciales validas para " + result.usuario);
+        }
+    }
+    static class PermissionValidator extends Validator {
+        void check(AuthResult result) { System.out.println("Permisos verificados para " + result.usuario); }
+    }
+    static class LocationValidator extends Validator {
+        void check(AuthResult result) { System.out.println("Ubicacion verificada para " + result.usuario); }
+    }
+    static class TimeValidator extends Validator {
+        void check(AuthResult result) { System.out.println("Horario laboral verificado para " + result.usuario); }
+    }
+
+    static class AuthService {
+        AuthResult login(AuthStrategy strategy, Credentials credentials, Validator chain) {
+            AuthResult result = strategy.authenticate(credentials);
+            chain.validate(result);
+            System.out.println("Acceso concedido a " + result.usuario);
+            return result;
+        }
+    }
+
+    public static void main(String[] args) {
+        Validator cred = new CredentialValidator();
+        Validator perm = new PermissionValidator();
+        Validator loc = new LocationValidator();
+        Validator time = new TimeValidator();
+        cred.setNext(perm).setNext(loc).setNext(time);
+
+        AuthService service = new AuthService();
+        service.login(new GoogleStrategy(), new Credentials("julian"), cred);
+    }
+}
+```
+
+**Captura de ejecucion:** _(pega aqui la captura de consola al ejecutar `Ejercicio9.java`)_
+
+**Justificacion — por que esta combinacion es superior a resolverlo sin patrones:**
+Strategy decide 'como autentico' (quien eres); Chain decide 'si tengo acceso' (que puedo hacer) una vez autenticado. Son fases distintas del proceso: autenticacion primero, autorizacion despues.
+
+---
+
+### Ejercicio 10 — Aplicacion de Edicion de Imagenes
+**Patrones combinados:** Decorator + Command
+
+La app permite aplicar filtros acumulativos (sepia, brillo, blanco y negro) sobre la misma imagen en cualquier orden. Cada accion debe poder deshacerse.
+
+**Rol de cada patron:**
+**Decorator** (`SepiaDecorator`, `BrightnessDecorator`, `GrayscaleDecorator`) aplica filtros de forma acumulativa envolviendo la imagen; se pueden apilar en cualquier orden sin modificar los filtros existentes. **Command** (`ApplyFilterCommand`) encapsula cada operacion del usuario como un objeto con `execute()` y `undo()`, guardando el estado anterior para poder revertir.
+
+**Como interactuan:**
+El usuario aplica un filtro -> se crea un `ApplyFilterCommand` que envuelve la imagen actual con el Decorator correspondiente -> al hacer undo, el Command restaura la imagen guardada antes de aplicar ese filtro.
+
+**Codigo implementado:**
+```java
+package dosw.semana_4.patrones.ejercicio10;
+
+/**
+ * Ejercicio 10 - Aplicacion de Edicion de Imagenes
+ * Patrones: Decorator + Command
+ */
+public class Ejercicio10 {
+
+    interface Image { String render(); }
+    static class BaseImage implements Image {
+        public String render() { return "ImagenBase"; }
+    }
+    static abstract class ImageDecorator implements Image {
+        protected final Image wrapped;
+        ImageDecorator(Image wrapped) { this.wrapped = wrapped; }
+    }
+    static class GrayscaleDecorator extends ImageDecorator {
+        GrayscaleDecorator(Image i) { super(i); }
+        public String render() { return wrapped.render() + " + BlancoYNegro"; }
+    }
+    static class SepiaDecorator extends ImageDecorator {
+        SepiaDecorator(Image i) { super(i); }
+        public String render() { return wrapped.render() + " + Sepia"; }
+    }
+    static class BrightnessDecorator extends ImageDecorator {
+        BrightnessDecorator(Image i) { super(i); }
+        public String render() { return wrapped.render() + " + Brillo"; }
+    }
+
+    interface ImageCommand { void execute(); void undo(); }
+
+    static class ImageEditor {
+        Image image;
+        ImageEditor(Image base) { this.image = base; }
+    }
+
+    static class ApplyFilterCommand implements ImageCommand {
+        private final ImageEditor editor;
+        private final java.util.function.Function<Image, Image> filter;
+        private Image previous;
+        ApplyFilterCommand(ImageEditor editor, java.util.function.Function<Image, Image> filter) {
+            this.editor = editor; this.filter = filter;
+        }
+        public void execute() {
+            previous = editor.image;
+            editor.image = filter.apply(editor.image);
+            System.out.println("Aplicado -> " + editor.image.render());
+        }
+        public void undo() {
+            editor.image = previous;
+            System.out.println("Deshecho -> " + editor.image.render());
+        }
+    }
+
+    public static void main(String[] args) {
+        ImageEditor editor = new ImageEditor(new BaseImage());
+
+        ImageCommand sepia = new ApplyFilterCommand(editor, SepiaDecorator::new);
+        sepia.execute();
+
+        ImageCommand brillo = new ApplyFilterCommand(editor, BrightnessDecorator::new);
+        brillo.execute();
+
+        ImageCommand grayscale = new ApplyFilterCommand(editor, GrayscaleDecorator::new);
+        grayscale.execute();
+
+        System.out.println("--- Deshaciendo el ultimo filtro aplicado (grayscale) ---");
+        grayscale.undo();
+    }
+}
+```
+
+**Captura de ejecucion:** _(pega aqui la captura de consola al ejecutar `Ejercicio10.java`)_
+
+**Justificacion — por que esta combinacion es superior a resolverlo sin patrones:**
+Decorator resuelve la composicion de filtros sin explosion de subclases (5 filtros combinables serian 32 subclases sin Decorator, y solo 5 wrappers con el); Command resuelve el historial de acciones reversibles. Son el complemento perfecto para edicion no destructiva.
 
 ---
 
