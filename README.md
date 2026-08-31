@@ -237,9 +237,9 @@ public class Ejercicio5 {
 # SEMANA No 2 — Bitacora Pokemon
 
 ## Datos de Entrenador:
-- Nombre y Apellido: Julian ______________
-- Codigo de Estudiante: ______________
-- Curso: ______________
+- Nombre y Apellido: Julian Morales
+- Codigo de Estudiante: 1000091825
+- Curso: DOSW
 
 ---
 
