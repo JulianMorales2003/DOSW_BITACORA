@@ -1,4 +1,4 @@
-# DOSW_BITACORA
+﻿# DOSW_BITACORA
 
 Bitacora del curso **DOSW** (Java 21/24 + Git) — Streams, Expresiones Lambda y Programacion Funcional.
 
@@ -44,7 +44,9 @@ public class Ejercicio1 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de pantalla de la consola al ejecutar `Ejercicio1.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 1](docs/capturas/semana_1/ejercicio1.png)
 
 **Explicacion:**
 Se usa `filter()` con una condicion compuesta (`n % 2 == 0 && n > 10`) para quedarnos unicamente con los numeros pares mayores a diez, y se recolecta el resultado en una lista con `collect(Collectors.toList())`.
@@ -83,7 +85,9 @@ public class Ejercicio2 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de pantalla de la consola al ejecutar `Ejercicio2.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 2](docs/capturas/semana_1/ejercicio2.png)
 
 **Explicacion:**
 El pipeline encadena `filter()` para descartar palabras cortas, `map()` con `String::toUpperCase` para transformarlas, y `sorted()` para el orden alfabetico. El tamano final se obtiene con `.size()` sobre la lista resultante.
@@ -127,7 +131,9 @@ public class Ejercicio3 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de pantalla de la consola al ejecutar `Ejercicio3.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 3](docs/capturas/semana_1/ejercicio3.png)
 
 **Explicacion:**
 `filter(User::isActive)` deja solo los usuarios activos; `map()` transforma cada uno a su nombre en mayuscula; `sorted()` ordena alfabeticamente el resultado final.
@@ -170,7 +176,9 @@ public class Ejercicio4 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de pantalla de la consola al ejecutar `Ejercicio4.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 4](docs/capturas/semana_1/ejercicio4.png)
 
 **Explicacion:**
 Se aplica `filter()` sobre la edad para quedarnos con los mayores de edad, y luego `map(User::getName)` para proyectar unicamente el nombre de cada uno.
@@ -213,7 +221,9 @@ public class Ejercicio5 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de pantalla de la consola al ejecutar `Ejercicio5.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 5](docs/capturas/semana_1/ejercicio5.png)
 
 **Explicacion:**
 `peek(System.out::println)` imprime cada transaccion a medida que se recorre el stream (unicamente con fines de trazabilidad, sin modificar el flujo); `anyMatch(t -> !t.isApproved())` determina si existe alguna transaccion no aprobada. El lote se considera valido cuando no existe ninguna transaccion no aprobada.
@@ -276,7 +286,9 @@ public class Ejercicio1 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de pantalla de la consola al ejecutar `Ejercicio1.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 1](docs/capturas/semana_2/ejercicio1.png)
 
 **Explicacion:**
 Se filtra el stream con `filter()` comparando el tipo con "Fuego" y se proyecta el nombre con `map()`.
@@ -312,7 +324,9 @@ public class Ejercicio2 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de pantalla de la consola al ejecutar `Ejercicio2.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 2](docs/capturas/semana_2/ejercicio2.png)
 
 **Explicacion:**
 Se aplica `map(String::toUpperCase)` a cada nombre del stream y se unen con `String.join` para mostrarlos.
@@ -346,7 +360,9 @@ public class Ejercicio3 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de pantalla de la consola al ejecutar `Ejercicio3.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 3](docs/capturas/semana_2/ejercicio3.png)
 
 **Explicacion:**
 `reduce(0, Integer::sum)` acumula el total sumando cada nivel del stream, partiendo de un valor identidad de 0.
@@ -391,7 +407,9 @@ public class Ejercicio4 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de pantalla de la consola al ejecutar `Ejercicio4.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 4](docs/capturas/semana_2/ejercicio4.png)
 
 **Explicacion:**
 `max(Comparator.comparingInt(...))` recorre el stream comparando niveles y retorna un `Optional` con el Pokemon de mayor nivel.
@@ -441,7 +459,9 @@ public class Ejercicio5 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de pantalla de la consola al ejecutar `Ejercicio5.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 5](docs/capturas/semana_2/ejercicio5.png)
 
 **Explicacion:**
 `filter()` deja solo los Pokemon con nivel > 80 y `count()` obtiene la cantidad total que cumple la condicion.
@@ -480,7 +500,9 @@ public class Ejercicio6 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de pantalla de la consola al ejecutar `Ejercicio6.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 6](docs/capturas/semana_2/ejercicio6.png)
 
 **Explicacion:**
 `distinct()` elimina los duplicados del stream basandose en el `equals()` de `String`, preservando el primer orden de aparicion.
@@ -516,7 +538,9 @@ public class Ejercicio7 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de pantalla de la consola al ejecutar `Ejercicio7.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 7](docs/capturas/semana_2/ejercicio7.png)
 
 **Explicacion:**
 `sorted()` aplica el orden natural (alfabetico) de `String` sobre el stream de nombres.
@@ -563,7 +587,9 @@ public class Ejercicio8 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de pantalla de la consola al ejecutar `Ejercicio8.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 8](docs/capturas/semana_2/ejercicio8.png)
 
 **Explicacion:**
 `filter(PokemonEvolucion::puedeEvolucionar)` usa una method reference sobre el record para dejar solo los Pokemon listos para evolucionar.
@@ -609,7 +635,9 @@ public class Ejercicio9 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de pantalla de la consola al ejecutar `Ejercicio9.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 9](docs/capturas/semana_2/ejercicio9.png)
 
 **Explicacion:**
 Se filtra el stream de objetos `Pokemon` comparando `getPoderCombate()` contra 500.
@@ -652,7 +680,9 @@ public class Ejercicio10 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de pantalla de la consola al ejecutar `Ejercicio10.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 10](docs/capturas/semana_2/ejercicio10.png)
 
 **Explicacion:**
 `map(Pokemon::getNombre)` proyecta cada objeto `Pokemon` a su nombre, y `collect()` construye la lista final de Strings.
@@ -695,7 +725,9 @@ public class Ejercicio11 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de pantalla de la consola al ejecutar `Ejercicio11.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 11](docs/capturas/semana_2/ejercicio11.png)
 
 **Explicacion:**
 `mapToDouble()` convierte el stream de objetos en un `DoubleStream` con el poder de combate, y `average()` calcula el promedio como `OptionalDouble`.
@@ -736,7 +768,9 @@ public class Ejercicio12 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de pantalla de la consola al ejecutar `Ejercicio12.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 12](docs/capturas/semana_2/ejercicio12.png)
 
 **Explicacion:**
 `max(Comparator.comparingDouble(Pokemon::getPoderCombate))` retorna el Pokemon con el poder de combate mas alto.
@@ -779,7 +813,9 @@ public class Ejercicio13 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de pantalla de la consola al ejecutar `Ejercicio13.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 13](docs/capturas/semana_2/ejercicio13.png)
 
 **Explicacion:**
 `Collectors.groupingBy(Pokemon::getTipo, Collectors.mapping(...))` agrupa los Pokemon en un `Map<String, List<String>>` segun su tipo.
@@ -823,7 +859,9 @@ public class Ejercicio14 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de pantalla de la consola al ejecutar `Ejercicio14.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 14](docs/capturas/semana_2/ejercicio14.png)
 
 **Explicacion:**
 Misma estrategia que el ejercicio 13 pero agrupando por `getRegion()` en lugar de `getTipo()`.
@@ -868,7 +906,9 @@ public class Ejercicio15 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de pantalla de la consola al ejecutar `Ejercicio15.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 15](docs/capturas/semana_2/ejercicio15.png)
 
 **Explicacion:**
 `max(Comparator.comparingInt(Entrenador::getMedallas))` recorre el stream de entrenadores y retorna el de mayor numero de medallas.
@@ -911,7 +951,9 @@ public class Ejercicio16 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de pantalla de la consola al ejecutar `Ejercicio16.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 16](docs/capturas/semana_2/ejercicio16.png)
 
 **Explicacion:**
 `filter(e -> e.getMedallas() > 5)` deja solo los entrenadores que superan las 5 medallas.
@@ -966,7 +1008,9 @@ public class Ejercicio17 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de pantalla de la consola al ejecutar `Ejercicio17.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 17](docs/capturas/semana_2/ejercicio17.png)
 
 **Explicacion:**
 Para cada entrenador se calcula la suma de poder de su equipo con un stream anidado (`mapToDouble().sum()`), y `max(Comparator.comparingDouble(...))` determina cual entrenador tiene el total mas alto.
@@ -1017,7 +1061,9 @@ public class Ejercicio18 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de pantalla de la consola al ejecutar `Ejercicio18.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 18](docs/capturas/semana_2/ejercicio18.png)
 
 **Explicacion:**
 `sorted(Comparator.comparingDouble(Pokemon::getPoderCombate).reversed())` ordena de mayor a menor poder, y `limit(5)` se queda con los primeros cinco. El ranking se imprime con `IntStream.range()` para evitar ciclos tradicionales.
@@ -1071,7 +1117,9 @@ public class Ejercicio19 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de pantalla de la consola al ejecutar `Ejercicio19.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 19](docs/capturas/semana_2/ejercicio19.png)
 
 **Explicacion:**
 Se construye un `Comparator` compuesto con `thenComparing()` que aplica los tres criterios en cascada (medallas desc, poder desc, nombre asc), y luego `sorted().limit(3)` obtiene el podio.
@@ -1137,7 +1185,9 @@ public class Ejercicio20 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de pantalla de la consola al ejecutar `Ejercicio20.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 20](docs/capturas/semana_2/ejercicio20.png)
 
 **Explicacion:**
 Se combinan varios pipelines independientes sobre la misma lista: `groupingBy()+counting()` para los conteos por tipo y region, `filter()+count()` para los legendarios, `mapToInt().average()` para el promedio de nivel, y `max(Comparator...)` para el Pokemon mas fuerte.
