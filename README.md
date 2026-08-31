@@ -6,6 +6,38 @@ Estructura: `src/main/dosw/semana_1/streams` (Streams basicos) y `src/main/dosw/
 
 ---
 
+## Comandos de Git utilizados en este repositorio
+
+Este proyecto se trabajó siguiendo un flujo de ramas (Git Flow simplificado): `main` y `develop` como ramas permanentes, una rama por semana (`feature/semana-n-dosw`) y una rama corta por cada ejercicio (`feature/semana-n-dosw-ejercicio-n`).
+
+| Comando | Qué hace | Cuándo se usó aquí |
+|---|---|---|
+| `git clone <url>` | Descarga el repositorio completo a la máquina local | Al empezar a trabajar en un equipo nuevo |
+| `git status` | Muestra el estado actual: qué archivos están modificados, en staging, o sin trackear | Antes de cada `add`/`commit`, para confirmar qué se va a guardar |
+| `git add <archivo>` | Mueve un archivo al "staging area" (lo prepara para el próximo commit) | Se usó por archivo, no `git add .`, para mantener commits específicos por ejercicio |
+| `git commit -m "mensaje"` | Guarda los cambios en staging como un punto fijo del historial | Un commit por ejercicio, con mensajes tipo `feat: ejercicio N semana X` |
+| `git push origin <rama>` / `git push -u origin <rama>` | Sube los commits locales al repositorio remoto (GitHub). El `-u` además vincula la rama local con la remota para que futuros `push`/`pull` no necesiten especificar destino | Al terminar cada rama de semana y al sincronizar `develop`/`main` |
+| `git checkout -b <rama>` | Crea una rama nueva y se cambia a ella en un solo paso | Para crear cada rama de ejercicio y de semana |
+| `git checkout <rama>` | Cambia a una rama que ya existe | Para volver a la rama de la semana después de terminar un ejercicio |
+| `git merge --no-ff <rama> -m "mensaje"` | Fusiona una rama sobre la actual. `--no-ff` fuerza un commit de merge explícito (en vez de "aplanar" el historial), así queda evidencia de que existió la rama | Al fusionar cada ejercicio a su rama de semana, y cada semana a `develop` |
+| `git branch -d <rama>` | Borra una rama local (solo si ya fue fusionada) | Después de fusionar cada rama de ejercicio — las ramas de semana NO se borran, quedan como evidencia |
+| `git branch` | Lista las ramas locales y marca en cuál se está parado | Para verificar en qué rama se estaba trabajando |
+| `git log --oneline --graph --all` | Muestra el historial de commits en forma de árbol, con las ramas | Para revisar que los merges quedaran bien encadenados |
+| `git remote -v` / `git remote set-url origin <url>` | Muestra o cambia la URL del repositorio remoto | Al renombrar el repositorio en GitHub, para actualizar la URL local |
+| `git rm -r --cached <carpeta>` | Deja de trackear una carpeta sin borrarla del disco | Para sacar `.idea/` y `out/` del control de versiones después de agregarlas a `.gitignore` |
+
+**Flujo típico para un ejercicio nuevo:**
+```powershell
+git checkout -b feature/semana-N-dosw-ejercicio-X
+git add ruta/al/Archivo.java
+git commit -m "feat: ejercicio X semana N"
+git checkout feature/semana-N-dosw
+git merge --no-ff feature/semana-N-dosw-ejercicio-X -m "merge: ejercicio X a semana N"
+git branch -d feature/semana-N-dosw-ejercicio-X
+```
+
+---
+
 # SEMANA No 1 — DOSW Manejo de Streams
 
 ## Datos personales:
