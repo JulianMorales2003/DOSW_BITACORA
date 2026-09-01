@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 820" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="1400" height="820" fill="#f5f5f5"/>
+  <text x="700" y="30" text-anchor="middle" font-size="22" font-weight="bold" fill="#222">Diagrama C4 - Nivel 1: Contexto del Sistema - TECH CUP FUTBOL</text>
+
+  <!-- Personas (arriba) -->
+  <g>
+    <rect x="60" y="60" width="240" height="110" rx="8" fill="#1168bd" stroke="#0b4884" stroke-width="2"/>
+    <text x="180" y="88" text-anchor="middle" font-size="15" font-weight="bold" fill="white">Estudiante / Jugador</text>
+    <text x="180" y="104" text-anchor="middle" font-size="11" fill="#dbe9fb">[Persona]</text>
+    <text x="180" y="126" text-anchor="middle" font-size="10" fill="white">Registro, perfil deportivo,</text>
+    <text x="180" y="140" text-anchor="middle" font-size="10" fill="white">busqueda de equipo, resultados</text>
+  </g>
+
+  <g>
+    <rect x="320" y="60" width="240" height="110" rx="8" fill="#1168bd" stroke="#0b4884" stroke-width="2"/>
+    <text x="440" y="88" text-anchor="middle" font-size="15" font-weight="bold" fill="white">Capitan</text>
+    <text x="440" y="104" text-anchor="middle" font-size="11" fill="#dbe9fb">[Persona - rol]</text>
+    <text x="440" y="126" text-anchor="middle" font-size="10" fill="white">Crea y administra equipo,</text>
+    <text x="440" y="140" text-anchor="middle" font-size="10" fill="white">inscripcion, alineaciones</text>
+  </g>
+
+  <g>
+    <rect x="580" y="60" width="240" height="110" rx="8" fill="#1168bd" stroke="#0b4884" stroke-width="2"/>
+    <text x="700" y="88" text-anchor="middle" font-size="15" font-weight="bold" fill="white">Arbitro</text>
+    <text x="700" y="104" text-anchor="middle" font-size="11" fill="#dbe9fb">[Persona]</text>
+    <text x="700" y="126" text-anchor="middle" font-size="10" fill="white">Gestiona el partido en vivo:</text>
+    <text x="700" y="140" text-anchor="middle" font-size="10" fill="white">tiempo, goles, tarjetas, sustituciones</text>
+  </g>
+
+  <g>
+    <rect x="840" y="60" width="240" height="110" rx="8" fill="#1168bd" stroke="#0b4884" stroke-width="2"/>
+    <text x="960" y="88" text-anchor="middle" font-size="15" font-weight="bold" fill="white">Organizador</text>
+    <text x="960" y="104" text-anchor="middle" font-size="11" fill="#dbe9fb">[Persona - admin]</text>
+    <text x="960" y="126" text-anchor="middle" font-size="10" fill="white">Crea torneos, aprueba inscripciones,</text>
+    <text x="960" y="140" text-anchor="middle" font-size="10" fill="white">gestiona arbitros, ve dashboard</text>
+  </g>
+
+  <g>
+    <rect x="1100" y="60" width="240" height="110" rx="8" fill="#1168bd" stroke="#0b4884" stroke-width="2"/>
+    <text x="1220" y="88" text-anchor="middle" font-size="15" font-weight="bold" fill="white">Graduado / Familiar</text>
+    <text x="1220" y="104" text-anchor="middle" font-size="11" fill="#dbe9fb">[Persona]</text>
+    <text x="1220" y="126" text-anchor="middle" font-size="10" fill="white">Se registra con correo Gmail,</text>
+    <text x="1220" y="140" text-anchor="middle" font-size="10" fill="white">participa como jugador o capitan</text>
+  </g>
+
+  <!-- Flechas personas -> sistema central -->
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#555"/>
+    </marker>
+  </defs>
+
+  <line x1="180" y1="170" x2="560" y2="380" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="240" y="270" font-size="10" fill="#333">Se registra / consulta</text>
+
+  <line x1="440" y1="170" x2="620" y2="380" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="440" y="270" font-size="10" fill="#333">Crea equipo / inscribe</text>
+
+  <line x1="700" y1="170" x2="700" y2="380" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="705" y="270" font-size="10" fill="#333">Gestiona partido en vivo</text>
+
+  <line x1="960" y1="170" x2="780" y2="380" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="880" y="270" font-size="10" fill="#333">Administra torneo</text>
+
+  <line x1="1220" y1="170" x2="840" y2="380" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="1050" y="270" font-size="10" fill="#333">Participa como jugador</text>
+
+  <!-- Sistema central -->
+  <rect x="500" y="380" width="400" height="140" rx="8" fill="#08427b" stroke="#052a4d" stroke-width="3"/>
+  <text x="700" y="420" text-anchor="middle" font-size="18" font-weight="bold" fill="white">TECH CUP FUTBOL</text>
+  <text x="700" y="438" text-anchor="middle" font-size="11" fill="#c6dcf0">[Sistema de Software]</text>
+  <text x="700" y="462" text-anchor="middle" font-size="11" fill="white">Plataforma web que centraliza inscripciones, equipos,</text>
+  <text x="700" y="478" text-anchor="middle" font-size="11" fill="white">torneos, arbitraje en vivo, estadisticas y</text>
+  <text x="700" y="494" text-anchor="middle" font-size="11" fill="white">comunicaciones del torneo semestral de futbol.</text>
+
+  <!-- Flechas sistema -> externos -->
+  <line x1="620" y1="520" x2="360" y2="620" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="410" y="580" font-size="10" fill="#333">Envia OTP [SMTP]</text>
+
+  <line x1="700" y1="520" x2="700" y2="620" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="705" y="575" font-size="10" fill="#333">Consulta ubicacion [API]</text>
+
+  <line x1="780" y1="520" x2="1040" y2="620" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="920" y="580" font-size="10" fill="#333">Sube/descarga archivos [HTTPS]</text>
+
+  <!-- Sistemas externos -->
+  <g>
+    <rect x="210" y="620" width="300" height="100" rx="8" fill="#999999" stroke="#666" stroke-width="2" stroke-dasharray="6,3"/>
+    <text x="360" y="650" text-anchor="middle" font-size="14" font-weight="bold" fill="white">Servidor de correo (SMTP)</text>
+    <text x="360" y="666" text-anchor="middle" font-size="11" fill="#eee">[Sistema Externo]</text>
+    <text x="360" y="688" text-anchor="middle" font-size="10" fill="white">Envio de codigos OTP para registro,</text>
+    <text x="360" y="702" text-anchor="middle" font-size="10" fill="white">login y acciones sensibles</text>
+  </g>
+
+  <g>
+    <rect x="550" y="620" width="300" height="100" rx="8" fill="#999999" stroke="#666" stroke-width="2" stroke-dasharray="6,3"/>
+    <text x="700" y="650" text-anchor="middle" font-size="14" font-weight="bold" fill="white">Servicio de mapas</text>
+    <text x="700" y="666" text-anchor="middle" font-size="11" fill="#eee">[Sistema Externo]</text>
+    <text x="700" y="688" text-anchor="middle" font-size="10" fill="white">Muestra ubicacion de canchas</text>
+    <text x="700" y="702" text-anchor="middle" font-size="10" fill="white">en el campus</text>
+  </g>
+
+  <g>
+    <rect x="890" y="620" width="300" height="100" rx="8" fill="#999999" stroke="#666" stroke-width="2" stroke-dasharray="6,3"/>
+    <text x="1040" y="650" text-anchor="middle" font-size="14" font-weight="bold" fill="white">Almacenamiento de archivos</text>
+    <text x="1040" y="666" text-anchor="middle" font-size="11" fill="#eee">[Sistema Externo]</text>
+    <text x="1040" y="688" text-anchor="middle" font-size="10" fill="white">Guarda fotos de perfil, escudos</text>
+    <text x="1040" y="702" text-anchor="middle" font-size="10" fill="white">de equipo y comprobantes de pago</text>
+  </g>
+
+  <!-- Leyenda -->
+  <g>
+    <rect x="60" y="760" width="20" height="20" fill="#1168bd"/>
+    <text x="90" y="775" font-size="12" fill="#222">Persona</text>
+    <rect x="200" y="760" width="20" height="20" fill="#08427b"/>
+    <text x="230" y="775" font-size="12" fill="#222">Sistema de software (TECH CUP FUTBOL)</text>
+    <rect x="560" y="760" width="20" height="20" fill="#999999" stroke="#666" stroke-dasharray="4,2"/>
+    <text x="590" y="775" font-size="12" fill="#222">Sistema externo</text>
+  </g>
+</svg>
