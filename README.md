@@ -230,10 +230,6 @@ public class Ejercicio5 {
 
 ---
 
-> NOTA: se siguio esta estructura para los 5 ejercicios correspondientes (vistos en la clase de LAB01).
-
----
-
 # SEMANA No 2 — Bitacora Pokemon
 
 ## Datos de Entrenador:
@@ -1194,9 +1190,6 @@ Se combinan varios pipelines independientes sobre la misma lista: `groupingBy()+
 
 ---
 
-> NOTA: se siguio esta estructura por los 20 ejercicios correspondientes de este taller.
-
----
 # SEMANA No 4 — Patrones de Diseno Combinados
 
 ## Datos del estudiante:
