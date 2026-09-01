@@ -2145,7 +2145,7 @@ Decorator resuelve la composicion de filtros sin explosion de subclases (5 filtr
 
 ## 1. Diagrama C4 — Nivel 1: Contexto del sistema
 
-Ver archivo `c4-nivel1-contexto.svg` (guardar en `docs/uml/` del repositorio, junto con el `.drawio` si se recrea en esa herramienta).
+![Diagrama de Contexto](docs/uml/c4-nivel1-contexto.svg)
 
 ---
 
