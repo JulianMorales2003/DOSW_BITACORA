@@ -1200,9 +1200,9 @@ Se combinan varios pipelines independientes sobre la misma lista: `groupingBy()+
 # SEMANA No 4 — Patrones de Diseno Combinados
 
 ## Datos del estudiante:
-- Nombre y Apellido: Julian Morales
-- Codigo de Estudiante: 1000091825
-- Curso: DOSW
+- Nombre y Apellido: Julian ______________
+- Codigo de Estudiante: ______________
+- Curso: ______________
 
 Cada ejercicio combina exactamente 2 patrones de diseno para resolver un caso real. Para cada uno se documenta: el rol de cada patron, como interactuan entre si, el codigo funcional que los implementa y por que esa combinacion es superior a resolverlo sin patrones.
 
@@ -1291,7 +1291,9 @@ public class Ejercicio1 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de consola al ejecutar `Ejercicio1.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 1](docs/capturas/semana_4/ejercicio1.png)
 
 **Justificacion — por que esta combinacion es superior a resolverlo sin patrones:**
 Sin Factory, el `Checkout` tendria que conocer que Strategy instanciar segun el pais, acoplando la logica de seleccion de pais con la logica de pago. Separando ambas responsabilidades, agregar un nuevo pais o un nuevo medio de pago no obliga a tocar el `Checkout`.
@@ -1399,7 +1401,9 @@ public class Ejercicio2 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de consola al ejecutar `Ejercicio2.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 2](docs/capturas/semana_4/ejercicio2.png)
 
 **Justificacion — por que esta combinacion es superior a resolverlo sin patrones:**
 Sin Factory, cada Observer tendria la logica de formateo del mensaje dispersa dentro de si mismo. Separando la construccion del mensaje (Factory) de la notificacion (Observer), agregar un canal nuevo (ej. WhatsApp) solo requiere un nuevo Observer + una nueva Factory, sin tocar el Pedido.
@@ -1475,7 +1479,9 @@ public class Ejercicio3 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de consola al ejecutar `Ejercicio3.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 3](docs/capturas/semana_4/ejercicio3.png)
 
 **Justificacion — por que esta combinacion es superior a resolverlo sin patrones:**
 Si el algoritmo completo fuera intercambiable se usaria Strategy; aqui el esqueleto (4 pasos) es fijo y solo 2 pasos varian, por eso Template Method es mas preciso. Combinado con Factory, el cliente ni siquiera necesita saber que subclases existen.
@@ -1555,7 +1561,9 @@ public class Ejercicio4 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de consola al ejecutar `Ejercicio4.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 4](docs/capturas/semana_4/ejercicio4.png)
 
 **Justificacion — por que esta combinacion es superior a resolverlo sin patrones:**
 Son momentos distintos del ciclo de vida: Builder resuelve la construccion inicial (evita constructores gigantes); Decorator resuelve la variacion dinamica de comportamiento (evita una explosion combinatoria de subclases para cada combinacion de poderes).
@@ -1628,7 +1636,9 @@ public class Ejercicio5 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de consola al ejecutar `Ejercicio5.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 5](docs/capturas/semana_4/ejercicio5.png)
 
 **Justificacion — por que esta combinacion es superior a resolverlo sin patrones:**
 Adapter resuelve 'hablar el idioma del otro sistema'; Facade resuelve 'no me cuentes todos los detalles, dame lo simple'. Son complementarios: la Facade usa el Adapter internamente, cada uno resolviendo un problema distinto de la integracion.
@@ -1722,7 +1732,9 @@ public class Ejercicio6 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de consola al ejecutar `Ejercicio6.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 6](docs/capturas/semana_4/ejercicio6.png)
 
 **Justificacion — por que esta combinacion es superior a resolverlo sin patrones:**
 Strategy responde 'como recomendar'; Observer responde 'a quien avisar que cambio el como'. Son ortogonales: cambiar el algoritmo (Strategy) dispara el aviso (Observer) a los componentes que deben re-renderizarse.
@@ -1823,7 +1835,9 @@ public class Ejercicio7 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de consola al ejecutar `Ejercicio7.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 7](docs/capturas/semana_4/ejercicio7.png)
 
 **Justificacion — por que esta combinacion es superior a resolverlo sin patrones:**
 Sin State, cada metodo de `Document` tendria un switch(estado){...}; con State, cada estado encapsula su propio comportamiento y sabe a que estado puede transicionar. El documento no sabe en que estado esta -- su estado sabe que hacer.
@@ -1914,7 +1928,9 @@ public class Ejercicio8 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de consola al ejecutar `Ejercicio8.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 8](docs/capturas/semana_4/ejercicio8.png)
 
 **Justificacion — por que esta combinacion es superior a resolverlo sin patrones:**
 Builder garantiza que el pedido este completo y valido antes de existir; Observer garantiza que la confirmacion desencadene reacciones sin acoplamiento directo entre el Pedido y cada subsistema. Son momentos distintos del ciclo de vida del pedido.
@@ -2023,7 +2039,9 @@ public class Ejercicio9 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de consola al ejecutar `Ejercicio9.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 9](docs/capturas/semana_4/ejercicio9.png)
 
 **Justificacion — por que esta combinacion es superior a resolverlo sin patrones:**
 Strategy decide 'como autentico' (quien eres); Chain decide 'si tengo acceso' (que puedo hacer) una vez autenticado. Son fases distintas del proceso: autenticacion primero, autorizacion despues.
@@ -2115,7 +2133,9 @@ public class Ejercicio10 {
 }
 ```
 
-**Captura de ejecucion:** _(pega aqui la captura de consola al ejecutar `Ejercicio10.java`)_
+**Captura de ejecucion:**
+
+![Ejercicio 10](docs/capturas/semana_4/ejercicio10.png)
 
 **Justificacion — por que esta combinacion es superior a resolverlo sin patrones:**
 Decorator resuelve la composicion de filtros sin explosion de subclases (5 filtros combinables serian 32 subclases sin Decorator, y solo 5 wrappers con el); Command resuelve el historial de acciones reversibles. Son el complemento perfecto para edicion no destructiva.
