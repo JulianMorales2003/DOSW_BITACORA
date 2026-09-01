@@ -1200,9 +1200,9 @@ Se combinan varios pipelines independientes sobre la misma lista: `groupingBy()+
 # SEMANA No 4 — Patrones de Diseno Combinados
 
 ## Datos del estudiante:
-- Nombre y Apellido: Julian ______________
-- Codigo de Estudiante: ______________
-- Curso: ______________
+- Nombre y Apellido: Julian Morales
+- Codigo de Estudiante: 1000091825
+- Curso: DOSW
 
 Cada ejercicio combina exactamente 2 patrones de diseno para resolver un caso real. Para cada uno se documenta: el rol de cada patron, como interactuan entre si, el codigo funcional que los implementa y por que esa combinacion es superior a resolverlo sin patrones.
 
