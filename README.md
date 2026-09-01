@@ -2141,6 +2141,455 @@ Decorator resuelve la composicion de filtros sin explosion de subclases (5 filtr
 - [ ] Reto Mewtwo — Ejercicio propuesto
 
 ---
+# Taller 6 — Planeación Ágil TECH CUP FÚTBOL
+
+## 1. Diagrama C4 — Nivel 1: Contexto del sistema
+
+Ver archivo `c4-nivel1-contexto.svg` (guardar en `docs/uml/` del repositorio, junto con el `.drawio` si se recrea en esa herramienta).
+
+---
+
+## 2. Épica — TCH-EPIC-01
+
+| Campo | Valor |
+|---|---|
+| **Código** | TCH-EPIC-01 |
+| **Nombre** | Plataforma digital TECH CUP FÚTBOL |
+| **Fecha de inicio** | 08/08/2026 — Sprint 1 |
+| **Fecha de cierre** | 01/10/2026 — cierre del Sprint 7 |
+| **Propietario (DOSW)** | Julian Morales |
+| **Problema que resuelve** | El torneo semestral se organiza con WhatsApp, formularios y hojas de cálculo. Eso genera retrasos, errores de inscripción, resultados inconsistentes y mal manejo de la logística. |
+| **Objetivo** | Diseñar e implementar una plataforma web centralizada que gestione el ciclo completo del torneo: inscripciones, equipos, partidos, arbitraje en vivo, estadísticas y comunicaciones. |
+| **Alcance incluido** | Identidad y autenticación · Perfil deportivo · Equipos · Torneos e inscripciones · Calendario · Competencia y alineaciones · Arbitraje en vivo · Logística · Estadísticas · Comunicaciones · Dashboard del organizador |
+| **Alcance excluido** | Pagos en línea dentro de la plataforma · Torneos de otros deportes · Aplicación móvil nativa · Integración con sistemas externos de la Escuela |
+| **Criterios de éxito** | ✓ El torneo puede gestionarse completamente desde la plataforma sin hojas de cálculo. <br> ✓ El árbitro puede gestionar un partido en vivo desde un celular. <br> ✓ Todos los actores completan su flujo principal sin asistencia. <br> ✓ La plataforma cumple WCAG 2.1 AA. |
+
+---
+
+## 3. Features del backlog
+
+### FEAT-01 — Registro e identidad de usuarios
+**Épica asociada:** TCH-EPIC-01 · **Sprint:** Sprint 1 (08/08–14/08) · **TCH-RF-01**
+
+**Descripción:** Habilita que cualquier persona (estudiante, graduado o familiar) pueda crear una cuenta segura en la plataforma y autenticarse, con verificación por OTP para evitar registros falsos.
+
+- **Como** estudiante, **quiero** registrarme con mi correo y una contraseña, **para** poder acceder a la plataforma del torneo.
+- **Como** usuario registrado, **quiero** verificar mi cuenta con un código enviado a mi correo, **para** confirmar que la cuenta es realmente mía.
+
+**Criterios de aceptación:**
+- ✓ Dado que un usuario nuevo diligencia el formulario de registro con datos válidos, cuando envía el formulario, entonces el sistema crea la cuenta en estado INACTIVO y envía un OTP de 6 dígitos al correo.
+- ✓ Dado que un usuario ingresa el OTP correcto dentro de los 10 minutos de validez, cuando lo envía, entonces el sistema activa la cuenta y permite iniciar sesión.
+- ✗ Dado que un usuario intenta registrarse con un correo ya existente, cuando envía el formulario, entonces el sistema rechaza la solicitud y muestra el mensaje "el correo ya está registrado".
+
+**Puntos estimados:** 13
+
+**Tareas:**
+| Código | Título | Descripción para el desarrollador | Pts |
+|---|---|---|---|
+| TASK-01 | Crear la entidad Usuario en PostgreSQL | Tabla `usuarios` con: id (UUID), nombre_completo, correo (único), contraseña_hash, tipo_correo (INSTITUCIONAL/GMAIL), rol (JUGADOR/CAPITAN/ARBITRO/ORGANIZADOR), estado (ACTIVO/INACTIVO), fecha_creacion. Crear entidad JPA y repositorio Spring Data. | 1 |
+| TASK-02 | Implementar endpoint POST /api/v1/auth/register | Recibe nombre, correo, contraseña. Valida correo único y contraseña mínimo 8 caracteres (1 mayúscula, 1 número). Guarda con contraseña hasheada (bcrypt) y dispara envío del OTP. Devuelve 201 o 400 con errores. | 2 |
+| TASK-03 | Implementar el servicio de envío de OTP | Genera código de 6 dígitos, lo guarda en `otp_tokens` (correo, código hasheado, expiración de 10 min), lo envía por JavaMailSender con plantilla HTML. Bloquea reenvío por 60 segundos. | 2 |
+| TASK-04 | Implementar endpoint POST /api/v1/auth/verify-otp | Recibe correo y código. Busca el OTP más reciente no expirado. Si coincide, activa la cuenta e invalida el OTP (200). Si no, devuelve 400. Tras 3 intentos fallidos, bloquea el correo 5 minutos. | 2 |
+| TASK-05 | Implementar endpoint POST /api/v1/auth/login | Valida contraseña con bcrypt. Si es válida, genera JWT (payload: userId, rol, tipo_correo, exp 8h) y devuelve 200 con el token. Si falla, devuelve 401 y registra el evento en auditoría. | 2 |
+| TASK-06 | Configurar Spring Security y filtro JWT en el API Gateway | Crear `JwtAuthenticationFilter` que intercepta cada request, extrae y valida el Bearer token (firma, expiración, formato) y carga el usuario en el SecurityContext. Las rutas `/auth/**` son públicas; el resto requiere token válido. | 3 |
+| TASK-07 | Documentar los endpoints en Swagger/OpenAPI 3.0 | Anotar `@Operation`, `@ApiResponse` y `@RequestBody` con ejemplos de éxito y error para cada endpoint de autenticación. Verificar que `/swagger-ui.html` muestre los contratos correctamente. | 1 |
+
+---
+
+### FEAT-02 — Perfil deportivo y gestión de jugadores
+**Épica asociada:** TCH-EPIC-01 · **Sprint:** Sprint 2 (15/08–21/08) · **TCH-RF-02**
+
+**Descripción:** Permite que un jugador complete su perfil deportivo (posición, foto, datos de contacto) y que los capitanes puedan buscar jugadores disponibles por posición para completar sus equipos.
+
+- **Como** jugador, **quiero** crear mi perfil deportivo indicando mi posición y subiendo una foto, **para** que los capitanes puedan encontrarme al buscar equipo.
+- **Como** capitán, **quiero** buscar jugadores disponibles filtrando por posición, **para** completar mi equipo antes del cierre de inscripciones.
+
+**Criterios de aceptación:**
+- ✓ Dado que un jugador diligencia su perfil con posición, semestre y programa, cuando guarda los cambios, entonces el sistema actualiza su perfil y lo marca como "disponible para equipo".
+- ✓ Dado que un capitán busca jugadores filtrando por posición "delantero", cuando ejecuta la búsqueda, entonces el sistema muestra solo los jugadores disponibles en esa posición.
+- ✗ Dado que un jugador intenta subir una foto de perfil de más de 5MB, cuando la envía, entonces el sistema rechaza el archivo y muestra "el archivo supera el tamaño máximo permitido (5MB)".
+
+**Puntos estimados:** 8
+
+**Tareas:**
+| Código | Título | Descripción para el desarrollador | Pts |
+|---|---|---|---|
+| TASK-08 | Crear la entidad PerfilDeportivo | Tabla `perfiles_deportivos` con: usuario_id (FK), posicion (ENUM), semestre, programa, foto_url, disponible (boolean). Relación 1 a 1 con Usuario. | 1 |
+| TASK-09 | Implementar endpoint PUT /api/v1/perfiles/{id} | Recibe posición, semestre, programa. Valida que la posición pertenezca al enum válido. Actualiza el perfil y devuelve 200 con el perfil actualizado o 400. | 2 |
+| TASK-10 | Implementar carga de foto de perfil | Endpoint POST /api/v1/perfiles/{id}/foto. Valida tipo de archivo (JPG/PNG) y tamaño máximo 5MB. Sube al servicio de almacenamiento externo y guarda la URL resultante. | 2 |
+| TASK-11 | Implementar endpoint GET /api/v1/perfiles/buscar?posicion=X&disponible=true | Filtra perfiles por posición y disponibilidad. Devuelve lista paginada con nombre, posición, semestre y foto. | 2 |
+| TASK-12 | Documentar los endpoints de perfiles en Swagger | Anotar los 3 endpoints anteriores con ejemplos de request/response. | 1 |
+
+---
+
+### FEAT-03 — Creación y administración de equipos
+**Épica asociada:** TCH-EPIC-01 · **Sprint:** Sprint 2 (15/08–21/08) · **TCH-RF-03 (Equipos)**
+
+**Descripción:** Permite a un capitán crear un equipo, definir su nombre y escudo, e invitar o aceptar jugadores hasta completar el mínimo requerido para inscribirse al torneo.
+
+- **Como** capitán, **quiero** crear un equipo con nombre y escudo, **para** empezar a reclutar jugadores.
+- **Como** capitán, **quiero** invitar jugadores a mi equipo desde el buscador de perfiles, **para** completar la plantilla mínima antes del cierre de inscripciones.
+
+**Criterios de aceptación:**
+- ✓ Dado que un usuario con rol CAPITAN crea un equipo con nombre único y escudo, cuando confirma la creación, entonces el sistema registra el equipo y lo asocia como capitán.
+- ✓ Dado que un capitán invita a un jugador disponible, cuando el jugador acepta la invitación, entonces el sistema lo agrega a la plantilla del equipo.
+- ✗ Dado que un capitán intenta crear un equipo con un nombre ya registrado en el torneo, cuando confirma la creación, entonces el sistema rechaza la solicitud y muestra "el nombre del equipo ya existe".
+
+**Puntos estimados:** 9
+
+**Tareas:**
+| Código | Título | Descripción para el desarrollador | Pts |
+|---|---|---|---|
+| TASK-13 | Crear las entidades Equipo y MiembroEquipo | Tabla `equipos` (id, nombre único, escudo_url, capitan_id, fecha_creacion) y `miembros_equipo` (equipo_id, jugador_id, estado INVITADO/ACEPTADO). | 1 |
+| TASK-14 | Implementar endpoint POST /api/v1/equipos | Recibe nombre y escudo. Valida nombre único en el torneo activo. Crea el equipo con el usuario autenticado como capitán. Devuelve 201 o 400. | 2 |
+| TASK-15 | Implementar carga del escudo del equipo | Endpoint POST /api/v1/equipos/{id}/escudo. Valida formato y tamaño, sube al almacenamiento externo, guarda la URL. | 1 |
+| TASK-16 | Implementar endpoint POST /api/v1/equipos/{id}/invitaciones | Recibe jugador_id. Valida que el jugador esté disponible. Crea el registro en `miembros_equipo` con estado INVITADO y notifica al jugador. | 2 |
+| TASK-17 | Implementar endpoint PATCH /api/v1/invitaciones/{id} | Recibe la decisión (ACEPTAR/RECHAZAR). Si acepta, cambia el estado a ACEPTADO y marca al jugador como no disponible. Devuelve 200. | 2 |
+| TASK-18 | Documentar los endpoints de equipos en Swagger | Anotar los 4 endpoints anteriores con ejemplos. | 1 |
+
+---
+
+### FEAT-04 — Inscripción al torneo y verificación de pago
+**Épica asociada:** TCH-EPIC-01 · **Sprint:** Sprint 3 (22/08–28/08) · **TCH-RF-04**
+
+**Descripción:** Permite que un capitán inscriba su equipo a un torneo activo, cargando el comprobante de pago para que el organizador lo verifique manualmente (no hay pasarela de pago en línea, según el alcance excluido).
+
+- **Como** capitán, **quiero** inscribir mi equipo a un torneo activo subiendo el comprobante de pago, **para** confirmar la participación de mi equipo.
+- **Como** organizador, **quiero** revisar los comprobantes de pago cargados, **para** aprobar o rechazar cada inscripción.
+
+**Criterios de aceptación:**
+- ✓ Dado que un capitán con equipo completo (mínimo de jugadores alcanzado) sube un comprobante de pago válido (PDF o imagen), cuando confirma la inscripción, entonces el sistema registra la inscripción en estado PENDIENTE_VERIFICACION.
+- ✓ Dado que un organizador aprueba una inscripción pendiente, cuando confirma la acción, entonces el sistema cambia el estado a CONFIRMADA y notifica al capitán.
+- ✗ Dado que un capitán intenta inscribir un equipo que no alcanza el mínimo de jugadores requerido, cuando confirma la inscripción, entonces el sistema rechaza la solicitud y muestra "el equipo no alcanza el mínimo de jugadores".
+
+**Puntos estimados:** 9
+
+**Tareas:**
+| Código | Título | Descripción para el desarrollador | Pts |
+|---|---|---|---|
+| TASK-19 | Crear la entidad Inscripcion | Tabla `inscripciones` (id, equipo_id, torneo_id, comprobante_url, estado PENDIENTE_VERIFICACION/CONFIRMADA/RECHAZADA, fecha_inscripcion). | 1 |
+| TASK-20 | Implementar endpoint POST /api/v1/inscripciones | Valida que el equipo alcance el mínimo de jugadores configurado para el torneo. Recibe el comprobante, lo sube al almacenamiento externo, crea la inscripción en estado PENDIENTE_VERIFICACION. | 2 |
+| TASK-21 | Implementar endpoint GET /api/v1/inscripciones?estado=PENDIENTE_VERIFICACION | Lista las inscripciones pendientes con datos del equipo y link al comprobante, para la revisión del organizador. | 1 |
+| TASK-22 | Implementar endpoint PATCH /api/v1/inscripciones/{id}/verificar | Recibe la decisión (APROBAR/RECHAZAR) y un motivo opcional. Actualiza el estado y envía notificación por correo al capitán. | 2 |
+| TASK-23 | Configurar validación del mínimo de jugadores por torneo | Agregar campo `min_jugadores_equipo` en la entidad Torneo y usarlo en la validación de TASK-20. | 1 |
+| TASK-24 | Documentar los endpoints de inscripciones en Swagger | Anotar los 3 endpoints anteriores con ejemplos de éxito y error. | 1 |
+| TASK-25 | Escribir pruebas unitarias del flujo de inscripción | Cubrir: inscripción exitosa, rechazo por mínimo de jugadores no alcanzado, aprobación y rechazo por el organizador. | 1 |
+
+---
+
+### FEAT-05 — Gestión del torneo y calendario de partidos
+**Épica asociada:** TCH-EPIC-01 · **Sprint:** Sprint 3 (22/08–28/08) · **TCH-RF-05**
+
+**Descripción:** Permite al organizador crear un torneo (fechas, reglamento, mínimo de jugadores) y publicar el calendario de partidos con cancha, fecha y hora, visible para todos los actores.
+
+- **Como** organizador, **quiero** crear un torneo definiendo sus fechas y reglamento, **para** abrir el periodo de inscripciones.
+- **Como** jugador, **quiero** consultar el calendario de partidos con la ubicación de cada cancha en el mapa del campus, **para** saber cuándo y dónde debo presentarme.
+
+**Criterios de aceptación:**
+- ✓ Dado que un organizador crea un torneo con nombre, fechas de inscripción y reglamento, cuando confirma la creación, entonces el sistema publica el torneo en estado ABIERTO_INSCRIPCIONES.
+- ✓ Dado que el organizador programa un partido asignando dos equipos, cancha, fecha y hora, cuando confirma, entonces el sistema publica el partido en el calendario visible para todos los usuarios.
+- ✗ Dado que el organizador intenta programar dos partidos en la misma cancha con horarios que se solapan, cuando confirma, entonces el sistema rechaza la programación y muestra "conflicto de horario en la cancha seleccionada".
+
+**Puntos estimados:** 10
+
+**Tareas:**
+| Código | Título | Descripción para el desarrollador | Pts |
+|---|---|---|---|
+| TASK-26 | Crear las entidades Torneo y Partido | `torneos` (id, nombre, fecha_inicio, fecha_fin, reglamento_url, min_jugadores_equipo, estado). `partidos` (id, torneo_id, equipo_local_id, equipo_visitante_id, cancha, fecha_hora, estado). | 1 |
+| TASK-27 | Implementar endpoint POST /api/v1/torneos | Recibe los datos del torneo, valida fechas coherentes (inicio antes que fin) y crea el torneo en estado ABIERTO_INSCRIPCIONES. | 2 |
+| TASK-28 | Implementar endpoint POST /api/v1/partidos | Valida que ambos equipos estén inscritos y confirmados en el torneo, y que no exista conflicto de horario en la cancha (mismo rango de tiempo). Crea el partido. | 3 |
+| TASK-29 | Implementar endpoint GET /api/v1/torneos/{id}/calendario | Devuelve la lista de partidos del torneo ordenados por fecha, con cancha, equipos y coordenadas para mostrarlas en el mapa. | 2 |
+| TASK-30 | Integrar el servicio de mapas para mostrar ubicación de canchas | Consumir la API del servicio de mapas externo para renderizar las canchas registradas con sus coordenadas en el calendario. | 1 |
+| TASK-31 | Documentar los endpoints de torneos y calendario en Swagger | Anotar los endpoints anteriores con ejemplos. | 1 |
+
+---
+
+### FEAT-06 — Alineaciones y competencia
+**Épica asociada:** TCH-EPIC-01 · **Sprint:** Sprint 3–4 (parcial en Sprint 3, cierre en Sprint 4) · **TCH-RF-06**
+
+**Descripción:** Permite al capitán organizar la alineación titular de su equipo para cada partido mediante arrastrar y soltar sobre una cancha virtual, y consultar el estado de la competencia (partidos jugados, próximos, resultados).
+
+- **Como** capitán, **quiero** organizar mi alineación titular arrastrando jugadores a las posiciones de la cancha, **para** definir el equipo que jugará cada partido.
+- **Como** jugador, **quiero** ver si fui convocado como titular o suplente en el próximo partido, **para** saber si debo presentarme como titular.
+
+**Criterios de aceptación:**
+- ✓ Dado que un capitán arrastra 11 jugadores de su plantilla a las posiciones de la cancha virtual, cuando guarda la alineación, entonces el sistema la registra como la alineación titular del partido.
+- ✓ Dado que un jugador consulta la alineación publicada de su próximo partido, cuando abre la vista, entonces el sistema le muestra su posición o su estado de suplente.
+- ✗ Dado que un capitán intenta guardar una alineación con menos de 11 jugadores, cuando confirma, entonces el sistema rechaza el guardado y muestra "la alineación debe tener 11 jugadores titulares".
+
+**Puntos estimados:** 8
+
+**Tareas:**
+| Código | Título | Descripción para el desarrollador | Pts |
+|---|---|---|---|
+| TASK-32 | Crear la entidad Alineacion | Tabla `alineaciones` (id, partido_id, equipo_id, jugador_id, posicion_cancha, es_titular). | 1 |
+| TASK-33 | Implementar componente de cancha virtual drag-and-drop en el frontend | Construir la vista de cancha con posiciones fijas donde el capitán arrastra jugadores desde la plantilla disponible. | 3 |
+| TASK-34 | Implementar endpoint POST /api/v1/partidos/{id}/alineacion | Recibe la lista de 11 jugadores titulares con su posición en cancha. Valida el número exacto de titulares y que todos pertenezcan al equipo. Guarda la alineación. | 2 |
+| TASK-35 | Implementar endpoint GET /api/v1/partidos/{id}/alineacion/{jugadorId} | Devuelve si el jugador consultado es titular (y su posición) o suplente para ese partido. | 1 |
+| TASK-36 | Documentar los endpoints de alineaciones en Swagger | Anotar los endpoints anteriores con ejemplos. | 1 |
+
+---
+
+### FEAT-07 — Módulo de arbitraje en vivo
+**Épica asociada:** TCH-EPIC-01 · **Sprint:** Sprint 4 (29/08–04/09) · **TCH-RF-07**
+
+**Descripción:** Da al árbitro una herramienta simple desde el celular para gestionar un partido en tiempo real: cronómetro, goles, tarjetas y sustituciones, actualizando el resultado en vivo para todos los usuarios.
+
+- **Como** árbitro, **quiero** iniciar el cronómetro del partido y registrar goles y tarjetas en tiempo real desde mi celular, **para** que el resultado se actualice automáticamente sin usar papel.
+- **Como** jugador o familiar, **quiero** ver el marcador y los eventos del partido en vivo, **para** seguir el desarrollo del juego aunque no esté presente.
+
+**Criterios de aceptación:**
+- ✓ Dado que un árbitro inicia un partido programado, cuando confirma el inicio, entonces el sistema activa el cronómetro y cambia el estado del partido a EN_CURSO.
+- ✓ Dado que un árbitro registra un gol indicando el jugador y el minuto, cuando confirma el registro, entonces el sistema actualiza el marcador en tiempo real (vía WebSocket) para todos los usuarios conectados.
+- ✗ Dado que un árbitro intenta registrar un evento (gol/tarjeta) en un partido que no está en curso, cuando lo intenta, entonces el sistema rechaza la acción y muestra "el partido no está activo".
+
+**Puntos estimados:** 11
+
+**Tareas:**
+| Código | Título | Descripción para el desarrollador | Pts |
+|---|---|---|---|
+| TASK-37 | Crear la entidad EventoPartido | Tabla `eventos_partido` (id, partido_id, jugador_id, tipo GOL/TARJETA_AMARILLA/TARJETA_ROJA/SUSTITUCION, minuto, fecha_registro). | 1 |
+| TASK-38 | Implementar endpoint POST /api/v1/partidos/{id}/iniciar | Valida que el árbitro asignado sea quien inicia el partido. Cambia el estado a EN_CURSO y registra la hora de inicio del cronómetro. | 2 |
+| TASK-39 | Implementar endpoint POST /api/v1/partidos/{id}/eventos | Valida que el partido esté EN_CURSO. Registra el evento (gol/tarjeta/sustitución) y publica el evento vía WebSocket al canal del partido. | 3 |
+| TASK-40 | Configurar canal WebSocket por partido para actualización en vivo | Crear un topic STOMP `/partidos/{id}` que emite cada evento registrado y el marcador actualizado a todos los clientes suscritos. | 3 |
+| TASK-41 | Implementar interfaz móvil simplificada de arbitraje | Vista responsive con botones grandes para gol, tarjeta amarilla, tarjeta roja y sustitución, optimizada para uso con una mano en celular. | 2 |
+| TASK-42 | Documentar los endpoints de arbitraje en Swagger | Anotar los endpoints anteriores con ejemplos. | 1 |
+
+---
+
+### FEAT-08 — Logística (refrigerios y dotación)
+**Épica asociada:** TCH-EPIC-01 · **Sprint:** Sprint 4 (29/08–04/09) · **TCH-RF-08**
+
+**Descripción:** Permite al organizador registrar y hacer seguimiento de la logística de cada partido: refrigerios entregados y dotación (balones, petos, botiquín) disponible en cada cancha.
+
+- **Como** organizador, **quiero** registrar la dotación asignada a cada cancha antes de un partido, **para** asegurar que el partido tenga los implementos necesarios.
+- **Como** organizador, **quiero** marcar los refrigerios entregados por equipo, **para** llevar control del presupuesto de logística.
+
+**Criterios de aceptación:**
+- ✓ Dado que un organizador asigna dotación (balones, petos, botiquín) a una cancha para un partido, cuando confirma, entonces el sistema registra la asignación asociada al partido.
+- ✓ Dado que un organizador marca como entregado el refrigerio de un equipo en un partido, cuando confirma, entonces el sistema actualiza el estado de entrega.
+- ✗ Dado que un organizador intenta asignar dotación a un partido que ya finalizó, cuando lo intenta, entonces el sistema rechaza la acción y muestra "no se puede modificar la logística de un partido finalizado".
+
+**Puntos estimados:** 6
+
+**Tareas:**
+| Código | Título | Descripción para el desarrollador | Pts |
+|---|---|---|---|
+| TASK-43 | Crear la entidad LogisticaPartido | Tabla `logistica_partido` (id, partido_id, dotacion JSON, refrigerio_local_entregado, refrigerio_visitante_entregado). | 1 |
+| TASK-44 | Implementar endpoint POST /api/v1/partidos/{id}/logistica | Recibe la lista de dotación asignada. Valida que el partido no esté finalizado. Guarda o actualiza el registro de logística. | 2 |
+| TASK-45 | Implementar endpoint PATCH /api/v1/partidos/{id}/logistica/refrigerio | Recibe el equipo (local/visitante) y marca su refrigerio como entregado. | 2 |
+| TASK-46 | Documentar los endpoints de logística en Swagger | Anotar los endpoints anteriores con ejemplos. | 1 |
+
+---
+
+### FEAT-09 — Estadísticas individuales y por equipo
+**Épica asociada:** TCH-EPIC-01 · **Sprint:** Sprint 5 (05/09–11/09) · **TCH-RF-09**
+
+**Descripción:** Calcula automáticamente, a partir de los eventos registrados por los árbitros, las estadísticas individuales de cada jugador (goles, tarjetas, minutos jugados) y rankings del torneo.
+
+- **Como** jugador, **quiero** ver mis estadísticas acumuladas del torneo (goles, tarjetas, partidos jugados), **para** conocer mi desempeño.
+- **Como** organizador, **quiero** ver el ranking de goleadores del torneo, **para** publicarlo como parte de la premiación final.
+
+**Criterios de aceptación:**
+- ✓ Dado que un árbitro registra un gol de un jugador, cuando el evento se guarda, entonces el sistema actualiza automáticamente el contador de goles del jugador en sus estadísticas.
+- ✓ Dado que un usuario consulta el ranking de goleadores del torneo, cuando abre la vista, entonces el sistema muestra los jugadores ordenados de mayor a menor cantidad de goles.
+- ✗ Dado que un usuario consulta las estadísticas de un torneo que aún no ha jugado ningún partido, cuando abre la vista, entonces el sistema muestra el mensaje "aún no hay estadísticas disponibles para este torneo".
+
+**Puntos estimados:** 7
+
+**Tareas:**
+| Código | Título | Descripción para el desarrollador | Pts |
+|---|---|---|---|
+| TASK-47 | Crear la vista materializada EstadisticasJugador | Vista/tabla agregada que calcula, a partir de `eventos_partido`, el total de goles, tarjetas amarillas, tarjetas rojas y partidos jugados por jugador y torneo. | 2 |
+| TASK-48 | Implementar listener que actualiza estadísticas al registrar un evento | Suscribir un listener al guardado de `EventoPartido` (TASK-39) que recalcula la fila agregada del jugador afectado. | 2 |
+| TASK-49 | Implementar endpoint GET /api/v1/torneos/{id}/ranking-goleadores | Devuelve la lista de jugadores del torneo ordenada por goles descendente, con nombre, equipo y cantidad de goles. | 1 |
+| TASK-50 | Implementar endpoint GET /api/v1/jugadores/{id}/estadisticas | Devuelve las estadísticas acumuladas del jugador en el torneo activo. | 1 |
+| TASK-51 | Documentar los endpoints de estadísticas en Swagger | Anotar los endpoints anteriores con ejemplos. | 1 |
+
+---
+
+### FEAT-10 — Comunicaciones y chats
+**Épica asociada:** TCH-EPIC-01 · **Sprint:** Sprint 5 (05/09–11/09) · **TCH-RF-10**
+
+**Descripción:** Da a cada equipo un canal de chat interno para coordinarse, y al organizador la posibilidad de publicar comunicados generales visibles para todos los participantes del torneo.
+
+- **Como** jugador, **quiero** chatear con mis compañeros de equipo dentro de la plataforma, **para** coordinar detalles del partido sin depender de WhatsApp.
+- **Como** organizador, **quiero** publicar un comunicado general del torneo, **para** que todos los participantes vean la información importante en un solo lugar.
+
+**Criterios de aceptación:**
+- ✓ Dado que un jugador escribe un mensaje en el chat de su equipo, cuando lo envía, entonces el sistema lo entrega en tiempo real a los demás miembros conectados del equipo.
+- ✓ Dado que un organizador publica un comunicado con título y contenido, cuando lo confirma, entonces el sistema lo muestra en la sección de comunicados visible para todos los usuarios del torneo.
+- ✗ Dado que un usuario que no pertenece a un equipo intenta enviar un mensaje al chat de ese equipo, cuando lo intenta, entonces el sistema rechaza la acción con un error de autorización.
+
+**Puntos estimados:** 8
+
+**Tareas:**
+| Código | Título | Descripción para el desarrollador | Pts |
+|---|---|---|---|
+| TASK-52 | Crear las entidades MensajeEquipo y Comunicado | `mensajes_equipo` (id, equipo_id, usuario_id, contenido, fecha_envio). `comunicados` (id, torneo_id, titulo, contenido, fecha_publicacion). | 1 |
+| TASK-53 | Configurar canal WebSocket de chat por equipo | Crear topic STOMP `/equipos/{id}/chat` que entrega los mensajes en tiempo real solo a los miembros autenticados de ese equipo. | 3 |
+| TASK-54 | Implementar endpoint POST /api/v1/equipos/{id}/mensajes | Valida que el usuario autenticado pertenezca al equipo. Guarda el mensaje y lo publica en el canal WebSocket. | 2 |
+| TASK-55 | Implementar endpoint POST /api/v1/torneos/{id}/comunicados | Valida que el usuario tenga rol ORGANIZADOR. Guarda el comunicado y lo publica. | 1 |
+| TASK-56 | Documentar los endpoints de comunicaciones en Swagger | Anotar los endpoints anteriores con ejemplos. | 1 |
+
+---
+
+### FEAT-11 — Llaves eliminatorias y tabla de posiciones
+**Épica asociada:** TCH-EPIC-01 · **Sprint:** Sprint 5–6 · **TCH-RF-11**
+
+**Descripción:** Genera automáticamente la tabla de posiciones de la fase de grupos y las llaves eliminatorias del torneo a partir de los resultados registrados, eliminando el trabajo manual actual.
+
+- **Como** organizador, **quiero** que el sistema genere automáticamente la tabla de posiciones tras cada partido, **para** no tener que calcularla manualmente en una hoja de cálculo.
+- **Como** organizador, **quiero** generar el bracket de llaves eliminatorias una vez cerrada la fase de grupos, **para** definir el cruce de los equipos clasificados.
+
+**Criterios de aceptación:**
+- ✓ Dado que un partido de fase de grupos finaliza con un resultado, cuando el árbitro cierra el partido, entonces el sistema recalcula automáticamente puntos, diferencia de gol y posición de ambos equipos en la tabla.
+- ✓ Dado que la fase de grupos ha finalizado y el organizador solicita generar las llaves, cuando confirma, entonces el sistema arma el bracket eliminatorio con los equipos clasificados según su posición.
+- ✗ Dado que el organizador intenta generar las llaves antes de que todos los partidos de fase de grupos hayan finalizado, cuando lo intenta, entonces el sistema rechaza la acción y muestra "aún hay partidos de fase de grupos pendientes".
+
+**Puntos estimados:** 9
+
+**Tareas:**
+| Código | Título | Descripción para el desarrollador | Pts |
+|---|---|---|---|
+| TASK-57 | Crear la entidad TablaPosiciones | Tabla `tabla_posiciones` (torneo_id, equipo_id, partidos_jugados, ganados, empatados, perdidos, goles_favor, goles_contra, puntos). | 1 |
+| TASK-58 | Implementar recálculo automático de la tabla al finalizar un partido | Listener sobre el cierre de partido (estado FINALIZADO) que actualiza los contadores de ambos equipos según el resultado (3 pts victoria, 1 pt empate). | 3 |
+| TASK-59 | Implementar endpoint GET /api/v1/torneos/{id}/tabla-posiciones | Devuelve la tabla ordenada por puntos, luego diferencia de gol, luego goles a favor. | 1 |
+| TASK-60 | Implementar generación de llaves eliminatorias | Endpoint POST /api/v1/torneos/{id}/llaves. Valida que todos los partidos de grupos estén FINALIZADO. Arma el bracket cruzando los primeros clasificados según la tabla. | 3 |
+| TASK-61 | Documentar los endpoints de posiciones y llaves en Swagger | Anotar los endpoints anteriores con ejemplos. | 1 |
+
+---
+
+### FEAT-12 — Dashboard del organizador
+**Épica asociada:** TCH-EPIC-01 · **Sprint:** Sprint 6 (12/09–18/09) · **TCH-RF-12**
+
+**Descripción:** Da al organizador una vista centralizada en tiempo real del estado del torneo: partidos en curso, inscripciones pendientes de verificación y alertas operativas, para hacer seguimiento sin revisar módulo por módulo.
+
+- **Como** organizador, **quiero** ver en un solo panel los partidos en curso y las inscripciones pendientes por verificar, **para** actuar rápido sin navegar entre pantallas.
+- **Como** organizador, **quiero** recibir una alerta cuando un partido lleve más de 5 minutos sin eventos registrados, **para** detectar posibles problemas con el árbitro en cancha.
+
+**Criterios de aceptación:**
+- ✓ Dado que hay partidos en estado EN_CURSO, cuando el organizador abre el dashboard, entonces el sistema muestra la lista de partidos activos con marcador y minuto actual.
+- ✓ Dado que existen inscripciones en estado PENDIENTE_VERIFICACION, cuando el organizador abre el dashboard, entonces el sistema las muestra en una sección de pendientes con acceso directo a verificarlas.
+- ✗ Dado que un usuario sin rol ORGANIZADOR intenta acceder al dashboard, cuando lo intenta, entonces el sistema rechaza el acceso con un error de autorización.
+
+**Puntos estimados:** 8
+
+**Tareas:**
+| Código | Título | Descripción para el desarrollador | Pts |
+|---|---|---|---|
+| TASK-62 | Implementar endpoint GET /api/v1/dashboard/resumen | Restringido a rol ORGANIZADOR. Agrega en una sola respuesta: partidos EN_CURSO con marcador, inscripciones PENDIENTE_VERIFICACION y conteo de equipos/jugadores activos. | 3 |
+| TASK-63 | Implementar vista frontend del dashboard con actualización en vivo | Consumir el WebSocket de partidos (TASK-40) para refrescar los marcadores en tiempo real dentro del dashboard. | 3 |
+| TASK-64 | Implementar alerta de partido sin eventos recientes | Job programado que revisa cada 5 minutos los partidos EN_CURSO sin eventos nuevos y genera una notificación visible en el dashboard. | 2 |
+
+---
+
+### FEAT-INF-01 — Configuración del repositorio y GitHub Flow
+**Sprint:** Sprint 1
+
+**Descripción:** Sin repositorio configurado con ramas protegidas y flujo de trabajo claro, el equipo no puede colaborar de forma ordenada desde el primer día.
+
+**Puntos estimados:** 2
+
+**Tareas:**
+| Código | Título | Descripción para el desarrollador | Pts |
+|---|---|---|---|
+| TASK-I01 | Crear el repositorio en GitHub | Crear el repo `DOSW-TechCup-2026` en la organización. Inicializar con README, `.gitignore` para Java/Maven y licencia MIT. Configurar ramas: `main` (protegida, requiere PR y 1 aprobación), `develop` (protegida) y convención `feature/FEAT-XX-nombre`. Incluir al profesor como colaborador. | 1 |
+| TASK-I02 | Configurar el template de Pull Request | Crear `.github/pull_request_template.md` con checklist: descripción del cambio, issue relacionado, tipo de cambio (feature/fix/docs), pruebas realizadas y criterios de aceptación cumplidos. | 1 |
+
+---
+
+### FEAT-INF-02 — Documentación técnica (README, arquitectura, APIs)
+**Sprint:** Sprint 1 y Sprint 7 (cierre)
+
+**Descripción:** El equipo de desarrollo necesita saber cómo está organizado el sistema sin tener que preguntarle a nadie del equipo de gestión.
+
+**Puntos estimados:** 5
+
+**Tareas:**
+| Código | Título | Descripción para el desarrollador | Pts |
+|---|---|---|---|
+| TASK-I05 | Crear el diagrama de arquitectura de microservicios | Modelar en draw.io los 9 microservicios (identidad, usuarios, equipos, torneos, competencia, logística, árbitro, estadísticas, comunicaciones) con el API Gateway como punto de entrada. Indicar conexiones, bases de datos (PostgreSQL/MongoDB) y protocolos (REST/WebSocket). Guardar en `/docs/architecture/`. | 2 |
+| TASK-I06 | Redactar el README principal del repositorio | Incluir: descripción del proyecto, stack tecnológico, instrucciones de instalación y ejecución local, estructura de carpetas y link a la documentación de arquitectura. | 2 |
+| TASK-I07 (Sprint 7) | Completar la documentación final antes de la entrega | Revisar que el README, el diagrama de arquitectura y el Swagger de todos los microservicios estén actualizados con el estado final del sistema. | 1 |
+
+---
+
+### FEAT-INF-03 — Manual de identidad visual
+**Sprint:** Sprint 1
+
+**Descripción:** El frontend necesita la paleta de colores, tipografías y logo definidos antes de empezar a construir cualquier pantalla.
+
+**Puntos estimados:** 4
+
+**Tareas:**
+| Código | Título | Descripción para el desarrollador | Pts |
+|---|---|---|---|
+| TASK-I03 | Definir la paleta de colores y tipografías | Basarse en la identidad TECH CUP (negro carbón #1B2A4A, dorado, morado). Crear `/docs/brand/brand-guide.md` con valores HEX de la paleta, tipografía principal y secundaria, tamaños mínimos del logo y ejemplos de uso correcto e incorrecto. | 1 |
+| TASK-I04 | Diseñar el logo y sus variaciones | Crear el logo en SVG en 3 versiones: completo (escudo + texto), solo escudo (favicon/app icon) y monocromática. Exportar en PNG a 512x512, 256x256 y 64x64. Guardar en `/docs/brand/logo/`. | 2 |
+| TASK-I08 | Validar contraste de la paleta contra WCAG 2.1 AA | Verificar con una herramienta de contraste que las combinaciones de color usadas en texto sobre fondo cumplan la relación mínima de 4.5:1 exigida por el criterio de éxito de accesibilidad de la épica. | 1 |
+
+---
+
+### FEAT-INF-04 — Configuración de Jira (épica, features, sprints, tablero)
+**Sprint:** Sprint 1
+
+**Descripción:** Este mismo taller —el backlog que DOSW entrega— es el producto: la carga completa de la épica, los features, las tareas y los 7 sprints en Jira.
+
+**Puntos estimados:** 3
+
+**Tareas:**
+| Código | Título | Descripción para el desarrollador | Pts |
+|---|---|---|---|
+| TASK-I09 | Crear el proyecto Scrum en Jira | Projects → Create Project → Scrum, con el nombre del equipo. Habilitar Story Points en Project Settings → Features. | 1 |
+| TASK-I10 | Cargar la épica, los features y las tareas | Crear TCH-EPIC-01, todos los features como hijos de la épica, y todas las tareas como sub-tasks de cada feature (no de una HU) con sus Story Points asignados. | 1 |
+| TASK-I11 | Configurar los 7 sprints y distribuir las tareas | Crear los 7 sprints con sus fechas exactas y arrastrar las tareas del backlog hacia el sprint correspondiente, respetando la capacidad de 20 puntos (28 en el Sprint 7). Iniciar el Sprint 1. | 1 |
+
+---
+
+### FEAT-INF-05 — Presentación final y demo del sistema
+**Sprint:** Sprint 7
+
+**Descripción:** La entrega del 1 de octubre incluye una presentación al Comité Organizador con demo en vivo del sistema funcionando en staging.
+
+**Puntos estimados:** 3
+
+**Tareas:**
+| Código | Título | Descripción para el desarrollador | Pts |
+|---|---|---|---|
+| TASK-I12 | Preparar el ambiente de staging para la demo | Desplegar la versión final de los microservicios en un ambiente accesible, con datos de prueba realistas (torneo, equipos, partidos) precargados. | 2 |
+| TASK-I13 | Preparar la presentación y el guion de la demo | Armar las diapositivas de presentación al Comité y un guion paso a paso de la demo cubriendo el flujo principal de cada actor. | 1 |
+
+---
+
+## 4. Planificación de sprints
+
+7 sprints de 1 semana, del 8 de agosto al 1 de octubre de 2026. Capacidad de 20 puntos por sprint (4 personas × 5 días); el Sprint 7 dura 2 semanas (28 puntos).
+
+| Sprint | Fechas | Foco | Features | Entregable clave | Cap. |
+|---|---|---|---|---|---|
+| Sprint 1 | 08/08–14/08/26 | Base del proyecto + identidad | FEAT-INF-01, FEAT-INF-02, FEAT-INF-03, FEAT-INF-04, FEAT-01 | Repositorio configurado, manual de identidad, Jira listo, registro + login con OTP funcional. | 20pts |
+| Sprint 2 | 15/08–21/08/26 | Perfil deportivo y equipos | FEAT-02, FEAT-03 | Jugador crea su perfil deportivo. Capitán crea equipo y gestiona jugadores. | 20pts |
+| Sprint 3 | 22/08–28/08/26 | Torneos, inscripción y alineaciones | FEAT-04, FEAT-05, FEAT-06 (parcial) | Organizador crea torneo. Capitán inscribe equipo con comprobante. Calendario visible. | 20pts |
+| Sprint 4 | 29/08–04/09/26 | Competencia y arbitraje en vivo | FEAT-06 (cierre), FEAT-07, FEAT-08 | Capitán gestiona alineaciones. Árbitro opera el módulo en vivo. Logística registrada. | 20pts |
+| Sprint 5 | 05/09–11/09/26 | Estadísticas, comunicaciones y llaves | FEAT-09, FEAT-10, FEAT-11 | Estadísticas automáticas. Chat de equipo. Llaves eliminatorias generadas. | 20pts |
+| Sprint 6 | 12/09–18/09/26 | Dashboard y correcciones | FEAT-12, corrección de bugs S4-S5 | Dashboard del organizador. Bugs críticos corregidos. Pruebas de integración. | 20pts |
+| Sprint 7 | 19/09–01/10/26 | Documentación final y demo | FEAT-INF-02 (cierre), FEAT-INF-05 | README completo. Arquitectura documentada. Presentación lista. Demo en staging. Entrega el 01/10. | 28pts |
+
+**Criterio de cierre sugerido para cada sprint:** todas las tareas del sprint están en estado Done, el entregable clave del sprint es demostrable en vivo, y no quedan bugs críticos abiertos relacionados con los features del sprint.
+
+---
+
+## 5. Las 8 capturas requeridas (pendientes — se toman directo en Jira)
+
+- **C1:** Proyecto Jira creado con el nombre del equipo.
+- **C2:** Épica TCH-EPIC-01 abierta con descripción, criterios de éxito y fechas.
+- **C3:** Vista de la épica mostrando todos los features como hijos.
+- **C4:** Un feature abierto mostrando su descripción con las HU en texto, criterios de aceptación y sus subtareas con Story Points.
+- **C5:** Backlog con los 7 sprints configurados y sus fechas.
+- **C6:** Backlog completo con las tareas distribuidas en cada sprint (vista de puntos visible).
+- **C7:** Tablero Kanban del Sprint 1 activo con las columnas To Do / In Progress / Done.
+---
 
 ## Estrategia de ramas (Git Flow)
 - Ramas principales: `main` y `develop`.
@@ -2148,3 +2597,5 @@ Decorator resuelve la composicion de filtros sin explosion de subclases (5 filtr
 - Por cada ejercicio: `feature/semana-n-dosw-ejercicio-n`, mergeada hacia la rama de la semana y luego eliminada.
 - Al completar la semana, `feature/semana-n-dosw` se fusiona a `develop` mediante Pull Request (esta rama semanal no se elimina, queda como evidencia).
 - Al cierre de cada ciclo, se sincroniza `develop` hacia `main`.
+
+
