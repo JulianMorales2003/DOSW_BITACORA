@@ -6,106 +6,6 @@ Estructura: `src/main/dosw/semana_1/streams` (Streams basicos) y `src/main/dosw/
 
 ---
 
-## Comandos de Git — Guia de referencia
-
-Este proyecto se trabajo siguiendo un flujo de ramas (Git Flow simplificado): `main` y `develop` como ramas permanentes, una rama por semana (`feature/semana-n-dosw`) y una rama corta por cada ejercicio (`feature/semana-n-dosw-ejercicio-n`). Abajo se documentan tanto los comandos que se usaron en este repo como los demas comandos de uso comun en Git, para tener una referencia completa.
-
-### Configuracion inicial
-
-| Comando | Que hace | Se uso aqui |
-|---|---|---|
-| `git config --global user.name "Nombre"` | Define el nombre que aparece en los commits, a nivel global (todos los repos del equipo) | No, ya estaba configurado en el equipo |
-| `git config --global user.email "correo"` | Define el correo asociado a los commits | No, ya estaba configurado en el equipo |
-| `git init` | Convierte una carpeta comun en un repositorio Git (crea la carpeta `.git`) | No, se partio de un repo ya clonado |
-| `git clone <url>` | Descarga un repositorio remoto completo (con su historial) a la maquina local | Si, al empezar a trabajar |
-
-### Ver el estado y el historial
-
-| Comando | Que hace | Se uso aqui |
-|---|---|---|
-| `git status` | Muestra que archivos estan modificados, en staging, o sin trackear | Si, constantemente antes de cada `add`/`commit` |
-| `git diff` | Muestra linea por linea los cambios sin confirmar (working directory vs staging) | No |
-| `git diff --staged` | Muestra los cambios que ya estan en staging, listos para el commit | No |
-| `git log` | Muestra el historial completo de commits (autor, fecha, mensaje) | No directamente, se uso la variante de abajo |
-| `git log --oneline --graph --all` | Muestra el historial en forma de arbol compacto, con todas las ramas | Si, para revisar que los merges quedaran bien encadenados |
-| `git blame <archivo>` | Muestra quien modifico por ultima vez cada linea de un archivo | No |
-
-### Area de staging (preparar los cambios)
-
-| Comando | Que hace | Se uso aqui |
-|---|---|---|
-| `git add <archivo>` | Mueve un archivo especifico al staging area | Si, por archivo (no `git add .`) para mantener commits especificos por ejercicio |
-| `git add .` | Agrega todos los archivos modificados/nuevos de la carpeta actual al staging | No, se evito para no mezclar archivos de distintos ejercicios en un commit |
-| `git restore --staged <archivo>` | Saca un archivo del staging sin perder los cambios (lo "des-agrega") | No |
-| `git restore <archivo>` | Descarta los cambios de un archivo en el working directory (vuelve a la ultima version commiteada) | No |
-| `git rm <archivo>` | Elimina un archivo del repositorio y del disco | No |
-| `git rm -r --cached <carpeta>` | Deja de trackear una carpeta sin borrarla del disco | Si, para sacar `.idea/` y `out/` del control de versiones tras agregarlas a `.gitignore` |
-| `git mv <origen> <destino>` | Mueve o renombra un archivo y lo registra como tal en Git | No |
-
-### Commits
-
-| Comando | Que hace | Se uso aqui |
-|---|---|---|
-| `git commit -m "mensaje"` | Guarda los cambios en staging como un punto fijo del historial | Si, un commit por ejercicio, mensajes tipo `feat: ejercicio N semana X` |
-| `git commit --amend` | Modifica el ultimo commit (mensaje o contenido) en vez de crear uno nuevo | No |
-| `git commit -am "mensaje"` | Combina `add` (solo de archivos ya trackeados) y `commit` en un paso | No |
-
-### Ramas
-
-| Comando | Que hace | Se uso aqui |
-|---|---|---|
-| `git branch` | Lista las ramas locales y marca en cual se esta parado | Si, para verificar en que rama se estaba trabajando |
-| `git branch <nombre>` | Crea una rama nueva sin cambiarse a ella | No |
-| `git checkout -b <rama>` | Crea una rama nueva y se cambia a ella en un solo paso | Si, para cada rama de ejercicio y de semana |
-| `git checkout <rama>` | Cambia a una rama que ya existe | Si, para volver a la rama de la semana tras cada ejercicio |
-| `git switch <rama>` | Version moderna de `checkout` solo para cambiar de rama (mas clara, sin ambiguedad con archivos) | No, se uso `checkout` por costumbre |
-| `git branch -d <rama>` | Borra una rama local, solo si ya fue fusionada (seguro) | Si, tras fusionar cada rama de ejercicio |
-| `git branch -D <rama>` | Borra una rama local a la fuerza, aunque no este fusionada (peligroso) | No |
-| `git merge --no-ff <rama> -m "mensaje"` | Fusiona una rama sobre la actual, forzando un commit de merge explicito para dejar evidencia de que existio la rama | Si, ejercicio -> semana, y semana -> develop |
-| `git merge <rama>` (fast-forward) | Fusiona una rama simplemente moviendo el puntero, sin commit de merge, cuando no hay divergencia | No, se prefirio `--no-ff` para dejar rastro |
-| `git rebase <rama>` | Reaplica los commits de la rama actual sobre otra base, reescribiendo el historial (alternativa a merge) | No |
-
-### Trabajo con el repositorio remoto
-
-| Comando | Que hace | Se uso aqui |
-|---|---|---|
-| `git remote -v` | Muestra las URLs del/los repositorio(s) remoto(s) configurados | Si, para verificar la URL tras renombrar el repo |
-| `git remote set-url origin <url>` | Cambia la URL del remoto `origin` | Si, al renombrar el repositorio en GitHub |
-| `git remote add <nombre> <url>` | Agrega un nuevo repositorio remoto (por ejemplo, un fork) | No |
-| `git push origin <rama>` | Sube los commits locales de una rama al remoto | Si |
-| `git push -u origin <rama>` | Igual que arriba, pero ademas vincula la rama local con la remota (`-u` = upstream), para que futuros `push`/`pull` no necesiten especificar destino | Si, la primera vez que se subio cada rama nueva |
-| `git pull` | Trae los cambios del remoto y los fusiona en la rama actual (equivale a `fetch` + `merge`) | No, se trabajo siempre desde un solo equipo |
-| `git fetch` | Descarga los cambios del remoto sin fusionarlos automaticamente | No |
-
-### Deshacer cambios
-
-| Comando | Que hace | Se uso aqui |
-|---|---|---|
-| `git reset <archivo>` | Saca un archivo del staging (equivalente moderno: `git restore --staged`) | Si, una vez, para deshacer un `add` incorrecto |
-| `git reset --soft <commit>` | Mueve la rama a un commit anterior, dejando los cambios en staging | No |
-| `git reset --hard <commit>` | Mueve la rama a un commit anterior y descarta todos los cambios (peligroso, se pierde trabajo) | No |
-| `git revert <commit>` | Crea un commit nuevo que deshace los cambios de un commit especifico, sin reescribir el historial (seguro para ramas compartidas) | No |
-| `git stash` | Guarda temporalmente los cambios sin commitear, para poder cambiar de rama con el working directory limpio | No |
-| `git stash pop` | Recupera los cambios guardados con `stash` | No |
-
-### Otros
-
-| Comando | Que hace | Se uso aqui |
-|---|---|---|
-| `git tag <nombre>` | Marca un commit especifico como version (ej. `v1.0`) | No |
-| `.gitignore` (archivo, no comando) | Lista de patrones de archivos/carpetas que Git debe ignorar siempre | Si, para excluir `.idea/` y `out/` |
-
-**Flujo tipico usado en este proyecto para un ejercicio nuevo:**
-```powershell
-git checkout -b feature/semana-N-dosw-ejercicio-X
-git add ruta/al/Archivo.java
-git commit -m "feat: ejercicio X semana N"
-git checkout feature/semana-N-dosw
-git merge --no-ff feature/semana-N-dosw-ejercicio-X -m "merge: ejercicio X a semana N"
-git branch -d feature/semana-N-dosw-ejercicio-X
-```
-
----
 # SEMANA No 1 — DOSW Manejo de Streams
 
 ## Datos personales:
@@ -1294,13 +1194,15 @@ Se combinan varios pipelines independientes sobre la misma lista: `groupingBy()+
 
 ---
 
+> NOTA: se siguio esta estructura por los 20 ejercicios correspondientes de este taller.
+
 ---
 # SEMANA No 4 — Patrones de Diseno Combinados
 
 ## Datos del estudiante:
-- Nombre y Apellido: Julian Morales
-- Codigo de Estudiante: 1000091825
-- Curso: DOSW
+- Nombre y Apellido: Julian ______________
+- Codigo de Estudiante: ______________
+- Curso: ______________
 
 Cada ejercicio combina exactamente 2 patrones de diseno para resolver un caso real. Para cada uno se documenta: el rol de cada patron, como interactuan entre si, el codigo funcional que los implementa y por que esa combinacion es superior a resolverlo sin patrones.
 
